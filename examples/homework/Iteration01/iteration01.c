@@ -6,11 +6,14 @@
   \date 04-04-2023
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <time.h>
 
+
 #define STRING_SIZE 80
 #define TIME_STAMP_SIZE 19
+
 
 //! An organization struct which packages all relevant information to itself.
 typedef struct organization {
@@ -40,6 +43,47 @@ typedef struct donor {
     char fastName[STRING_SIZE];
     char zip[STRING_SIZE];
 } Donor;
+
+
+//## Core string input toolchain
+bool getLine(char *line, size_t lineSize);
+bool getWord(char *word, size_t wordSize);
+void getValidatedWord(char *word, size_t wordSize, bool (*validate)(const char *,
+                   size_t), const char *prompt, size_t promptSize, const char
+                   *error, size_t errorSize);
+
+//## String input validation functions
+bool isEmail(const char *email, size_t emailSize); 
+bool isName(const char *name, size_t nameSize);
+bool isPassword(const char *password, size_t passwordSize);
+bool isURL(const char *url, size_t urlSize);
+bool isYesOrNo(const char *yesNo, size_t yesNoSize);
+bool isZip(const char *zip, size_t zipSize);
+
+//## String input wrapper functions for getValidatedWord()
+void getEmail(char *email, size_t emailSize, const char *prompt, size_t
+              promptSize, const char *error, size_t errorSize);
+void getName(char *name, size_t nameSize, const char *prompt, size_t promptSize,
+             const char *error, size_t errorSize);
+void getPassword(char *password, size_t passwordSize, const char *prompt, size_t
+                 promptSize, const char *error, size_t errorSize);
+void getURL(char *url, size_t urlSize, const char *prompt, size_t promptSize,
+            const char *error, size_t errorSize);
+bool getYesOrNo(const char *prompt, size_t promptSize, const char *error, size_t
+                errorSize);
+void getZip(char *zip, size_t zipSize, const char *prompt, size_t promptSize,
+            const char *error, size_t errorSize);
+
+//## Double input toolchain
+bool strToDouble(const char *str, double *num);
+void getDouble(double *num, const char *prompt, size_t promptSize, const char
+               *error, size_t errorSize);
+
+//## Donation input toolchain
+bool isDonation(const char *donation, size_t donationSize);
+void getDonation(double *donation, const char *prompt, size_t promptSize, const
+                 char *error, size_t errorSize);
+
 
 int main(void)
 {
