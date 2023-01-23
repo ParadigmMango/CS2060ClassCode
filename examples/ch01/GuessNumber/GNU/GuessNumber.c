@@ -11,7 +11,7 @@ int isCorrect(int, int); // function prototype
 // Void arguments in C are best practice to indicate no arguments used
 int main(void)
 {
-   // srand( time( 0 ) ); // seed random number generator. Without this, the program generate the same answers when run.
+   srand( time( 0 ) ); // seed random number generator. Without this, the program generate the same answers when run.
    // Below are two lines with inconsistent whitespace
     //update with your name
     puts("Hello Jacob");
