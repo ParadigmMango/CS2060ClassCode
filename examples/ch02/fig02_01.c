@@ -5,7 +5,40 @@
 // function main begins program execution 
 int main( void )
 {
-   printf( "Welcome to C!\n" );
+   int length;
+   int width;
+   int area;
+
+   int readCode = 0;
+
+   puts("Enter the length");
+   readCode = scanf("%d", &length);
+   puts("");
+
+   // Test if the user entered valid data
+   if (readCode == 1) {
+      puts("Enter the width");
+      readCode = scanf("%d", &width);
+      puts("");
+
+      // Test if the user entered valid data
+      if(readCode == 1) {
+         area = length * width;
+
+         printf("Length: %d width: %d and area is %d\n", length, width, area);
+
+         double lengthOverWidth = (double) length / width;  // Unused but asked for?
+
+         double sidesAverage = (length + width) / 2.0;
+         printf("Average of sides: %.1f\n", sidesAverage);
+      } else {
+         puts("Error: Please enter one integer value.");
+      }
+   } else {
+      puts("Error: Please enter one integer value.");
+   }
+
+   return 0;
 } // end function main 
 
 
