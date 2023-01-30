@@ -1,5 +1,10 @@
 // Fig. 2.1: fig02_01.c
 // A first program in C 
+// Jacob Hartt
+// Deborah Harding
+// CS2060.002
+// 30 January 2023
+
 #include <stdio.h>
 
 // function main begins program execution 
