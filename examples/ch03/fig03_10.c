@@ -16,7 +16,15 @@ int main( void )
 
       // prompt user for input and obtain value from user 
       printf( "%s", "Enter result ( 1=pass,2=fail ): " );
-      scanf( "%d", &result );
+      int scanRet = scanf( "%d", &result );
+      while((getchar()) != '\n'); // clear input buffer
+
+      // prompt user for input until a valid one is obtained
+      while (scanRet != 1 || (result != 1 && result != 2)) {
+         printf( "%s", "Error: please enter a valid result ( 1=pass,2=fail ): " );
+         scanRet = scanf( "%d", &result );
+         while((getchar()) != '\n'); // clear input buffer
+      } // end while
 
       // if result 1, increment passes 
       if ( result == 1 ) {     
