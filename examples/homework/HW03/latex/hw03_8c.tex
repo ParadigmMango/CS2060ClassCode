@@ -1,0 +1,144 @@
+\hypertarget{hw03_8c}{}\doxysection{hw03.\+c File Reference}
+\label{hw03_8c}\index{hw03.c@{hw03.c}}
+
+
+CS2060.\+002 Homework Assignment \#3.  
+
+
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{hw03_8c_aaad675b344c9206d5dc5b21b2d2da4bf}{calculate\+Charge}} (double hours)
+\begin{DoxyCompactList}\small\item\em Calculates how much a car is charged. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{hw03_8c_a4d005ea1ee4e7e2510d88945507c79c9}{get\+Valid\+Input}} ()
+\begin{DoxyCompactList}\small\item\em Gets a valid input. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{hw03_8c_aaaad1dc65a1409189bbf7910b40f2a36}{is\+Numeric\+Input\+Valid}} (double input)
+\begin{DoxyCompactList}\small\item\em Validates numeric inputs. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{hw03_8c_a8bb038cf5988b273a7191d2ae4d7fe7a}{print\+Car\+Summary}} (unsigned int car\+Num, double hours, double charge)
+\begin{DoxyCompactList}\small\item\em Prints a car\textquotesingle{}s transaction summary. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{hw03_8c_aa15d6d92d46f9531023a54fa7e21e7b1}{print\+Totals\+Summary}} (unsigned int num\+Cars, double hours, double charges)
+\begin{DoxyCompactList}\small\item\em Print the day\textquotesingle{}s total cars, hours parked, and charges summary. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{hw03_8c_a840291bc02cba5474a4cb46a9b9566fe}{main}} (void)
+\begin{DoxyCompactList}\small\item\em The main function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+CS2060.\+002 Homework Assignment \#3. 
+
+\begin{DoxyAuthor}{Author}
+Jacob Hartt (\href{mailto:jacobjhartt@gmail.com}{\texttt{ jacobjhartt@gmail.\+com}})
+\end{DoxyAuthor}
+A program which calculates the daily charges of a parking garage. \begin{DoxyVersion}{Version}
+1.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+02-\/16-\/2023 
+\end{DoxyDate}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{hw03_8c_aaad675b344c9206d5dc5b21b2d2da4bf}\label{hw03_8c_aaad675b344c9206d5dc5b21b2d2da4bf}} 
+\index{hw03.c@{hw03.c}!calculateCharge@{calculateCharge}}
+\index{calculateCharge@{calculateCharge}!hw03.c@{hw03.c}}
+\doxysubsubsection{\texorpdfstring{calculateCharge()}{calculateCharge()}}
+{\footnotesize\ttfamily double calculate\+Charge (\begin{DoxyParamCaption}\item[{double}]{hours }\end{DoxyParamCaption})}
+
+
+
+Calculates how much a car is charged. 
+
+Calculates the charge accrued when a car is parked in the garage for a certain number of hours.
+
+
+\begin{DoxyParams}{Parameters}
+{\em hours} & the hours a car has been parked \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The charge calculation 
+\end{DoxyReturn}
+\mbox{\Hypertarget{hw03_8c_a4d005ea1ee4e7e2510d88945507c79c9}\label{hw03_8c_a4d005ea1ee4e7e2510d88945507c79c9}} 
+\index{hw03.c@{hw03.c}!getValidInput@{getValidInput}}
+\index{getValidInput@{getValidInput}!hw03.c@{hw03.c}}
+\doxysubsubsection{\texorpdfstring{getValidInput()}{getValidInput()}}
+{\footnotesize\ttfamily double get\+Valid\+Input (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Gets a valid input. 
+
+Repeatedly prompts a user for an input and responds with why invalid inputs are not accepted until a valid input is entered, which it then returns.
+
+\begin{DoxyReturn}{Returns}
+A valid double input 
+\end{DoxyReturn}
+\mbox{\Hypertarget{hw03_8c_aaaad1dc65a1409189bbf7910b40f2a36}\label{hw03_8c_aaaad1dc65a1409189bbf7910b40f2a36}} 
+\index{hw03.c@{hw03.c}!isNumericInputValid@{isNumericInputValid}}
+\index{isNumericInputValid@{isNumericInputValid}!hw03.c@{hw03.c}}
+\doxysubsubsection{\texorpdfstring{isNumericInputValid()}{isNumericInputValid()}}
+{\footnotesize\ttfamily bool is\+Numeric\+Input\+Valid (\begin{DoxyParamCaption}\item[{double}]{input }\end{DoxyParamCaption})}
+
+
+
+Validates numeric inputs. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em input} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A boolean indicating whether an input is valid 
+\end{DoxyReturn}
+\mbox{\Hypertarget{hw03_8c_a840291bc02cba5474a4cb46a9b9566fe}\label{hw03_8c_a840291bc02cba5474a4cb46a9b9566fe}} 
+\index{hw03.c@{hw03.c}!main@{main}}
+\index{main@{main}!hw03.c@{hw03.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+The main function. 
+
+\begin{DoxyReturn}{Returns}
+The exit value 
+\end{DoxyReturn}
+\mbox{\Hypertarget{hw03_8c_a8bb038cf5988b273a7191d2ae4d7fe7a}\label{hw03_8c_a8bb038cf5988b273a7191d2ae4d7fe7a}} 
+\index{hw03.c@{hw03.c}!printCarSummary@{printCarSummary}}
+\index{printCarSummary@{printCarSummary}!hw03.c@{hw03.c}}
+\doxysubsubsection{\texorpdfstring{printCarSummary()}{printCarSummary()}}
+{\footnotesize\ttfamily void print\+Car\+Summary (\begin{DoxyParamCaption}\item[{unsigned int}]{car\+Num,  }\item[{double}]{hours,  }\item[{double}]{charge }\end{DoxyParamCaption})}
+
+
+
+Prints a car\textquotesingle{}s transaction summary. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em car\+Num} & the number of the car \\
+\hline
+{\em hours} & the number of hours the car parked in the garage today \\
+\hline
+{\em charge} & the charge the car accrued \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{hw03_8c_aa15d6d92d46f9531023a54fa7e21e7b1}\label{hw03_8c_aa15d6d92d46f9531023a54fa7e21e7b1}} 
+\index{hw03.c@{hw03.c}!printTotalsSummary@{printTotalsSummary}}
+\index{printTotalsSummary@{printTotalsSummary}!hw03.c@{hw03.c}}
+\doxysubsubsection{\texorpdfstring{printTotalsSummary()}{printTotalsSummary()}}
+{\footnotesize\ttfamily void print\+Totals\+Summary (\begin{DoxyParamCaption}\item[{unsigned int}]{num\+Cars,  }\item[{double}]{hours,  }\item[{double}]{charges }\end{DoxyParamCaption})}
+
+
+
+Print the day\textquotesingle{}s total cars, hours parked, and charges summary. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em num\+Cars} & the number of cars parked in the garage today \\
+\hline
+{\em hours} & the total hours all cars spent parked in the garage today \\
+\hline
+{\em charges} & the total charges all cars accrued in the garage today \\
+\hline
+\end{DoxyParams}
