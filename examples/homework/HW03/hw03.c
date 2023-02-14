@@ -74,13 +74,27 @@ void printTotalsSummary(unsigned int numCars, double hours, double charges);
   \return The exit value
  */
 int main(void) {
-    printCarSummary(1, 2, 33);
-    printCarSummary(3, 3.1, 2.75);
-    printCarSummary(2, 23, 0.1);
+    unsigned int carNum = 0;
+    double input;
+    double totalHours = 0.0;
+    double totalCharge = 0.00;
 
-    printTotalsSummary(1, 2, -33);
-    printTotalsSummary(0, 2325.325, -0.234234);
-    printTotalsSummary(2, 26.4, 12.75);
+    do {
+        input = getValidInput();
+
+        if (input != END_PROGRAM) {
+            carNum++;
+
+            double charge = calculateCharge(input);
+
+            printCarSummary(carNum, input, charge);
+
+            totalHours += input;
+            totalCharge += charge;
+        }
+    } while (input != END_PROGRAM);
+
+    printTotalsSummary(carNum, totalHours, totalCharge);
 
     return 0;
 }
