@@ -74,11 +74,7 @@ void printTotalsSummary(unsigned int numCars, double hours, double charges);
   \return The exit value
  */
 int main(void) {
-    printf("%d", isNumericInputValid(-0.1));
-    printf("%d", isNumericInputValid(-1));
-    printf("%d", isNumericInputValid(324.5));
-    printf("%d", isNumericInputValid(3));
-    printf("%d", isNumericInputValid(0));
+    printf("%f", getValidInput());
 
     return 0;
 }
@@ -96,6 +92,33 @@ double calculateCharge(double hours) {
     }
 
     return charge;
+}
+
+double getValidInput() {
+    double input;
+    bool isInputValid = false;
+
+    do {
+        puts("Enter the number of hours the car was parked or enter -1 "
+              "to quit.");
+        
+        int retVal = scanf("%lf", &input);
+
+        while(getchar() != '\n');
+
+        if (retVal > 0) {
+            if (isNumericInputValid(input)) {
+                isInputValid = true;
+            } else {
+                puts("You did not enter a valid number(input was neither ERROR "
+                     "or between 0 and MAX_HOURS_ALLOWED)");
+            }
+        } else {
+            puts("You did not enter a number");
+        }
+    } while (!isInputValid);
+
+    return input;
 }
 
 bool isNumericInputValid(double input) {
