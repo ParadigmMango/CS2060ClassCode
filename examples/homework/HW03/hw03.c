@@ -78,6 +78,10 @@ int main(void) {
     printCarSummary(3, 3.1, 2.75);
     printCarSummary(2, 23, 0.1);
 
+    printTotalsSummary(1, 2, -33);
+    printTotalsSummary(0, 2325.325, -0.234234);
+    printTotalsSummary(2, 26.4, 12.75);
+
     return 0;
 }
 
@@ -131,4 +135,17 @@ void printCarSummary(unsigned int carNum, double hours, double charge) {
     puts("  Car          Hours         Charge");
     printf("  %3d\t       %2.1f\t     $%.2lf\n", carNum, hours, charge);
     puts("");
+}
+
+void printTotalsSummary(unsigned int numCars, double hours, double charges) {
+    puts("");
+    puts("PARKING GARAGE SUMMARY");
+
+    if (numCars == 0) {
+        puts("There were no cars parked today.");
+    } else {
+        puts("Total Cars      Total Hours     Total Charge");
+        printf("    %3d\t           %2.1f\t           $%.2lf\n", numCars, hours,
+                                                                 charges);
+    }
 }
