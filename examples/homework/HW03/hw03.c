@@ -9,6 +9,19 @@
 
 #include <stdbool.h>
 
+//! The additional hourly rate past the minimum charge.
+#define ADDITIONAL_HOURS_RATE 0.75
+//! The the user input which indicates they wish to end the program.
+#define END_PROGRAM -1
+//! The maximum amount a car may be charged in a day.
+#define MAX_CHARGE 12.00
+//! The maximum hours a user input may indicate.
+#define MAX_HOURS_ALLOWED 24.0
+//! The minimum amount a car may be charged in a day.
+#define MIN_FLAT_RATE_CHARGE 3.00
+//! The maximum time a car can be parked to only pay the minimum charge.
+#define MIN_HOURS_AT_FLAT_RATE 3.0
+
 
 //! Calculates how much a car is charged.
 /*!
@@ -53,7 +66,7 @@ void printCarSummary(unsigned int carNum, double hours, double charge);
 void printTotalsSummary(unsigned int numCars, double hours, double charges);
 
 
-//! The main function
+//! The main function.
 /*!
   \return The exit value
  */

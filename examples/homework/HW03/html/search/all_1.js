@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['getvalidinput_1',['getValidInput',['../hw03_8c.html#a4d005ea1ee4e7e2510d88945507c79c9',1,'hw03.c']]]
+  ['calculatecharge_1',['calculateCharge',['../hw03_8c.html#aaad675b344c9206d5dc5b21b2d2da4bf',1,'hw03.c']]]
 ];
