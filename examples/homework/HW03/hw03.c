@@ -7,7 +7,9 @@
   \date 02-16-2023
  */
 
+#include <math.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 //! The additional hourly rate past the minimum charge.
 #define ADDITIONAL_HOURS_RATE 0.75
@@ -28,6 +30,7 @@
   Calculates the charge accrued when a car is parked in the garage for a 
   certain number of hours.
 
+  \pre The input is valid.
   \param hours the hours a car has been parked
   \return The charge calculation
  */
@@ -71,5 +74,24 @@ void printTotalsSummary(unsigned int numCars, double hours, double charges);
   \return The exit value
  */
 int main(void) {
+    printf("%f", calculateCharge(2.0));
+    printf("%f", calculateCharge(3.1));
+    printf("%f", calculateCharge(23));
+
     return 0;
+}
+
+double calculateCharge(double hours) {
+    double charge = MIN_FLAT_RATE_CHARGE;
+
+    if (hours > MIN_HOURS_AT_FLAT_RATE) {
+        double hoursCharged = ceil(hours - MIN_HOURS_AT_FLAT_RATE);
+        charge += hoursCharged * ADDITIONAL_HOURS_RATE;
+
+        if (charge > MAX_CHARGE) {
+            charge = MAX_CHARGE;
+        }
+    }
+
+    return charge;
 }

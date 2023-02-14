@@ -5,7 +5,9 @@
 CS2060.\+002 Homework Assignment \#3.  
 
 
+{\ttfamily \#include $<$math.\+h$>$}\newline
 {\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
 \doxysubsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
@@ -71,6 +73,9 @@ Calculates how much a car is charged.
 
 Calculates the charge accrued when a car is parked in the garage for a certain number of hours.
 
+\begin{DoxyPrecond}{Precondition}
+Assumes the input is valid. 
+\end{DoxyPrecond}
 
 \begin{DoxyParams}{Parameters}
 {\em hours} & the hours a car has been parked \\
