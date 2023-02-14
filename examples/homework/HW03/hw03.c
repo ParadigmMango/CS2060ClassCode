@@ -74,7 +74,9 @@ void printTotalsSummary(unsigned int numCars, double hours, double charges);
   \return The exit value
  */
 int main(void) {
-    printf("%f", getValidInput());
+    printCarSummary(1, 2, 33);
+    printCarSummary(3, 3.1, 2.75);
+    printCarSummary(2, 23, 0.1);
 
     return 0;
 }
@@ -123,4 +125,10 @@ double getValidInput() {
 
 bool isNumericInputValid(double input) {
     return input == END_PROGRAM || (input > 0.0 && input <= MAX_HOURS_ALLOWED);
+}
+
+void printCarSummary(unsigned int carNum, double hours, double charge) {
+    puts("  Car          Hours         Charge");
+    printf("  %3d\t       %2.1f\t     $%.2lf\n", carNum, hours, charge);
+    puts("");
 }
