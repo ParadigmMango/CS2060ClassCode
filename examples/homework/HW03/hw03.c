@@ -74,9 +74,11 @@ void printTotalsSummary(unsigned int numCars, double hours, double charges);
   \return The exit value
  */
 int main(void) {
-    printf("%f", calculateCharge(2.0));
-    printf("%f", calculateCharge(3.1));
-    printf("%f", calculateCharge(23));
+    printf("%d", isNumericInputValid(-0.1));
+    printf("%d", isNumericInputValid(-1));
+    printf("%d", isNumericInputValid(324.5));
+    printf("%d", isNumericInputValid(3));
+    printf("%d", isNumericInputValid(0));
 
     return 0;
 }
@@ -94,4 +96,8 @@ double calculateCharge(double hours) {
     }
 
     return charge;
+}
+
+bool isNumericInputValid(double input) {
+    return input == END_PROGRAM || (input > 0.0 && input <= MAX_HOURS_ALLOWED);
 }
