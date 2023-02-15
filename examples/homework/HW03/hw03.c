@@ -156,7 +156,7 @@ bool isNumericInputValid(double input) {
 
 void printCarSummary(unsigned int carNum, double hours, double charge) {
     puts("  Car          Hours         Charge");
-    printf("  %3d\t       %2.1f\t     $%.2lf\n", carNum, hours, charge);
+    printf("  %3u\t       %2.1f\t     $%.2lf\n", carNum, hours, charge);
     puts("");
 }
 
@@ -170,7 +170,7 @@ void printTotalsSummary(unsigned int numCars, double hours, double charges) {
         puts("There were no cars parked today.");
     } else {
         puts("Total Cars      Total Hours     Total Charge");
-        printf("    %3d\t           %2.1f\t           $%.2lf\n", numCars, hours,
+        printf("    %3u\t           %2.1f\t           $%.2lf\n", numCars, hours,
                                                                  charges);
     }
 }
