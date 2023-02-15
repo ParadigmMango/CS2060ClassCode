@@ -79,16 +79,19 @@ int main(void) {
     double totalHours = 0.0;
     double totalCharge = 0.00;
 
+    // Retrieve, calculate and add car values until the user ends the program.
     do {
         input = getValidInput();
 
         if (input != END_PROGRAM) {
+            // Run an individual car's calculations.
             carNum++;
 
             double charge = calculateCharge(input);
 
             printCarSummary(carNum, input, charge);
 
+            // Keep a running total of hours and charges.
             totalHours += input;
             totalCharge += charge;
         }
@@ -103,9 +106,11 @@ double calculateCharge(double hours) {
     double charge = MIN_FLAT_RATE_CHARGE;
 
     if (hours > MIN_HOURS_AT_FLAT_RATE) {
+        // Charge the hourly rate.
         double hoursCharged = ceil(hours - MIN_HOURS_AT_FLAT_RATE);
         charge += hoursCharged * ADDITIONAL_HOURS_RATE;
 
+        // Enforce the maximum charge.
         if (charge > MAX_CHARGE) {
             charge = MAX_CHARGE;
         }
@@ -119,6 +124,7 @@ double getValidInput() {
     bool isInputValid = false;
 
     do {
+        // Retrieve information from the user and clear the buffer.
         puts("Enter the number of hours the car was parked or enter -1 "
               "to quit.");
         
@@ -126,7 +132,9 @@ double getValidInput() {
 
         while(getchar() != '\n');
 
+        // Accept only numeric inputs.
         if (retVal > 0) {
+            // Accept only valid numeric inputs.
             if (isNumericInputValid(input)) {
                 isInputValid = true;
             } else {
@@ -142,6 +150,7 @@ double getValidInput() {
 }
 
 bool isNumericInputValid(double input) {
+    // Ensure that the input is either a valid hour count or END_PROGRAM.
     return input == END_PROGRAM || (input > 0.0 && input <= MAX_HOURS_ALLOWED);
 }
 
@@ -152,9 +161,11 @@ void printCarSummary(unsigned int carNum, double hours, double charge) {
 }
 
 void printTotalsSummary(unsigned int numCars, double hours, double charges) {
+    // Print the data header.
     puts("");
     puts("PARKING GARAGE SUMMARY");
 
+    // Print the data only if at least one car parked in the garage today.
     if (numCars == 0) {
         puts("There were no cars parked today.");
     } else {
