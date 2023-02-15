@@ -21,6 +21,8 @@
 #define MAX_HOURS_ALLOWED 24.0
 //! The minimum amount a car may be charged in a day.
 #define MIN_FLAT_RATE_CHARGE 3.00
+//! The minimum hours a user input may indicate.
+#define MIN_HOURS_ALLOWED 0.0
 //! The maximum time a car can be parked to only pay the minimum charge.
 #define MIN_HOURS_AT_FLAT_RATE 3.0
 
@@ -151,7 +153,8 @@ double getValidInput() {
 
 bool isNumericInputValid(double input) {
     // Ensure that the input is either a valid hour count or END_PROGRAM.
-    return input == END_PROGRAM || (input > 0.0 && input <= MAX_HOURS_ALLOWED);
+    return input == END_PROGRAM ||
+           (input > MIN_HOURS_ALLOWED && input <= MAX_HOURS_ALLOWED);
 }
 
 void printCarSummary(unsigned int carNum, double hours, double charge) {
