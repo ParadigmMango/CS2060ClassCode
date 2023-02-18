@@ -5,7 +5,8 @@
 
 // function prototypes
 void modifyArray(int b[], size_t size);
-void modifyElement(int e);               
+void modifyElement(int e);    
+void printArray(const int arr[], size_t size);           
 
 // function main begins program execution
 int main(void)
@@ -16,7 +17,10 @@ int main(void)
    printf("array: %p\n", a);
    printf("Reference of array[0]: %p\n", &a[0]);
    printf("Reference of array: %p\n", &a);
-   
+
+   // Question 6
+   printArray(a, SIZE);
+
    puts("");
    puts("Effects of passing entire array by reference:\n\nThe "
       "values of the original array are:");
@@ -63,8 +67,26 @@ void modifyElement(int e)
    // multiply parameter by 2                                  
    printf("Value in modifyElement is %d\n", e *= 2);            
 } 
-                          
 
+// Prints the elements of arr                          
+void printArray(const int arr[], size_t size)
+{ 
+   if (size > 0) {
+      // Print the opening bracket of the array
+      printf("%s", "{");
+
+      // Print the array
+      for (size_t i = 0; i < size; ++i) {                                 
+         printf("%d, ", arr[i]); 
+      }    
+
+      // Delete the last ", " after the data is printed and cap the array of with }             
+      puts("\b\b}");
+   } else {
+      // Print an empty array             
+      puts("{ }");
+   }                          
+}
 
 
 
