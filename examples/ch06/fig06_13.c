@@ -12,6 +12,12 @@ int main(void)
 {
    int a[SIZE] = { 0, 1, 2, 3, 4 }; // initialize array a
 
+   // Question 2
+   printf("array: %p\n", a);
+   printf("Reference of array[0]: %p\n", &a[0]);
+   printf("Reference of array: %p\n", &a);
+   
+   puts("");
    puts("Effects of passing entire array by reference:\n\nThe "
       "values of the original array are:");
 
