@@ -5,6 +5,7 @@
 #define EXAMS 4
 
 // function prototypes
+void getGrades(int studentGrades[STUDENTS][EXAMS], size_t students, size_t exams);
 int minimum(const int grades[][EXAMS], size_t pupils, size_t tests);
 int maximum(const int grades[][EXAMS], size_t pupils, size_t tests);
 double average(const int setOfGrades[], size_t tests);
@@ -13,11 +14,15 @@ void printArray(const int grades[][EXAMS], size_t pupils, size_t tests);
 // function main begins program execution
 int main(void)
 {
-   // initialize student grades for three students (rows)
-   int studentGrades[STUDENTS][EXAMS] =  
-      { { 77, 68, 86, 73 },
-        { 96, 87, 89, 78 },
-        { 70, 90, 86, 81 } };
+    // initialize student grades for three students with getGrades
+    int studentGrades[STUDENTS][EXAMS];
+    getGrades(studentGrades, STUDENTS, EXAMS);
+
+//    // manually initialize student grades for three students (rows)
+//    int studentGrades[STUDENTS][EXAMS] =  
+//       { { 77, 68, 86, 73 },
+//         { 96, 87, 89, 78 },
+//         { 70, 90, 86, 81 } };
 
    // output array studentGrades
    puts("The array is:");
@@ -33,6 +38,17 @@ int main(void)
       printf("The average grade for student %u is %.2f\n", 
          student, average(studentGrades[student], EXAMS));
    } 
+}
+
+// Get the EXAMS grades for each (STUDENTS in count) students
+void getGrades(int studentGrades[STUDENTS][EXAMS], size_t students, size_t exams)
+{
+    for (int student = 0; student < students; student++) {
+        for (int exam = 0; exam < exams; exam++) {
+            printf("Enter student %d's grade for exam %d: ", student + 1, exam + 1);
+            scanf("%d", &studentGrades[student][exam]);
+        }
+    }
 }
 
 // Find the minimum grade
