@@ -41,7 +41,7 @@ int main(void)
 }
 
 // Get the EXAMS grades for each (STUDENTS in count) students
-void getGrades(int studentGrades[STUDENTS][EXAMS], size_t students, size_t exams)
+void getGrades(int studentGrades[][EXAMS], size_t students, size_t exams)
 {
     for (int student = 0; student < students; student++) {
         for (int exam = 0; exam < exams; exam++) {
