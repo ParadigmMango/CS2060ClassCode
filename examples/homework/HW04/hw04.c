@@ -13,7 +13,7 @@
 /*!
   \param arr the array whose values will be used
   \param size the size of the array
-  \return The average of the array.
+  \return The average of the array
  */
 double calcAverage(const double arr[], size_t size);
 
