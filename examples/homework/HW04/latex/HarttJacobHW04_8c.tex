@@ -1,0 +1,217 @@
+\hypertarget{HarttJacobHW04_8c}{}\doxysection{Hartt\+Jacob\+HW04.\+c File Reference}
+\label{HarttJacobHW04_8c}\index{HarttJacobHW04.c@{HarttJacobHW04.c}}
+
+
+CS2060.\+002 Homework Assignment \#4.  
+
+
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{HarttJacobHW04_8c_af46ab44a0a70da17b70d6cb99174a392}\label{HarttJacobHW04_8c_af46ab44a0a70da17b70d6cb99174a392}} 
+\#define \mbox{\hyperlink{HarttJacobHW04_8c_af46ab44a0a70da17b70d6cb99174a392}{CATEGORIES}}~\char`\"{}1. Learning Activity 2. Homework 3. Project 4. Midterm 5. Final\char`\"{}
+\begin{DoxyCompactList}\small\item\em A string indicating the the number associated with each grade category. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{HarttJacobHW04_8c_ac266cd5154d4546aaa7e985d37f24e7c}\label{HarttJacobHW04_8c_ac266cd5154d4546aaa7e985d37f24e7c}} 
+\#define \mbox{\hyperlink{HarttJacobHW04_8c_ac266cd5154d4546aaa7e985d37f24e7c}{GRADE\+\_\+\+CATEGORIES}}~5
+\begin{DoxyCompactList}\small\item\em The number of grade categories for the class. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{HarttJacobHW04_8c_a63548e6c24d27167f2055ed498355e66}\label{HarttJacobHW04_8c_a63548e6c24d27167f2055ed498355e66}} 
+\#define \mbox{\hyperlink{HarttJacobHW04_8c_a63548e6c24d27167f2055ed498355e66}{MAX\+\_\+\+GRADE}}~105.\+0
+\begin{DoxyCompactList}\small\item\em The maximum grade possible in a grade category. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{HarttJacobHW04_8c_a19f440f2d51871412ede28caee70994f}\label{HarttJacobHW04_8c_a19f440f2d51871412ede28caee70994f}} 
+\#define \mbox{\hyperlink{HarttJacobHW04_8c_a19f440f2d51871412ede28caee70994f}{MIN\+\_\+\+GRADE}}~0.\+0
+\begin{DoxyCompactList}\small\item\em The minimum grade possible in a grade category. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{HarttJacobHW04_8c_ae5a58fd2d24f603d7d9c2dbefac331e9}\label{HarttJacobHW04_8c_ae5a58fd2d24f603d7d9c2dbefac331e9}} 
+\#define \mbox{\hyperlink{HarttJacobHW04_8c_ae5a58fd2d24f603d7d9c2dbefac331e9}{STUDENTS}}~4
+\begin{DoxyCompactList}\small\item\em The total number of students in the class. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{HarttJacobHW04_8c_a9f0db42f138f3fbac5e23008664d1184}\label{HarttJacobHW04_8c_a9f0db42f138f3fbac5e23008664d1184}} 
+\#define \mbox{\hyperlink{HarttJacobHW04_8c_a9f0db42f138f3fbac5e23008664d1184}{A\+\_\+\+MIN\+\_\+\+GRADE}}~90.\+0
+\begin{DoxyCompactList}\small\item\em The minimum grade required to earn an A in the class. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{HarttJacobHW04_8c_a07a0fa90bfb33a7deb629a45b2da402c}\label{HarttJacobHW04_8c_a07a0fa90bfb33a7deb629a45b2da402c}} 
+\#define \mbox{\hyperlink{HarttJacobHW04_8c_a07a0fa90bfb33a7deb629a45b2da402c}{B\+\_\+\+MIN\+\_\+\+GRADE}}~80.\+0
+\begin{DoxyCompactList}\small\item\em The minimum grade required to earn a B in the class. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{HarttJacobHW04_8c_a933d614b9f4d55e1fbb68b5326f2677b}\label{HarttJacobHW04_8c_a933d614b9f4d55e1fbb68b5326f2677b}} 
+\#define \mbox{\hyperlink{HarttJacobHW04_8c_a933d614b9f4d55e1fbb68b5326f2677b}{C\+\_\+\+MIN\+\_\+\+GRADE}}~70.\+0
+\begin{DoxyCompactList}\small\item\em The minimum grade required to earn a C in the class. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{HarttJacobHW04_8c_a9362d01747a5063d87bd27d37e452d1c}\label{HarttJacobHW04_8c_a9362d01747a5063d87bd27d37e452d1c}} 
+\#define \mbox{\hyperlink{HarttJacobHW04_8c_a9362d01747a5063d87bd27d37e452d1c}{D\+\_\+\+MIN\+\_\+\+GRADE}}~60.\+0
+\begin{DoxyCompactList}\small\item\em The minimum grade required to earn a D in the class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{HarttJacobHW04_8c_a8e3cbfadb5d227e779cdf59733b7125e}{calc\+Average}} (const double arr\mbox{[}$\,$\mbox{]}, size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Calculates the average value of an array. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{HarttJacobHW04_8c_a795c70bca61b27a3b745b0f1783c66ca}{calc\+Final\+Grade}} (const double student\+Grades\mbox{[}$\,$\mbox{]}\mbox{[}\mbox{\hyperlink{HarttJacobHW04_8c_ac266cd5154d4546aaa7e985d37f24e7c}{GRADE\+\_\+\+CATEGORIES}}\mbox{]}, unsigned int student\+Num, unsigned int num\+Grade\+Categories)
+\begin{DoxyCompactList}\small\item\em Calculates the final grade of a student for the class. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{HarttJacobHW04_8c_a47bf6a5b31f3fe7f2ed74de27ccaaa65}{enter\+Grades}} (double student\+Grades\mbox{[}$\,$\mbox{]}\mbox{[}\mbox{\hyperlink{HarttJacobHW04_8c_ac266cd5154d4546aaa7e985d37f24e7c}{GRADE\+\_\+\+CATEGORIES}}\mbox{]}, size\+\_\+t num\+Students, size\+\_\+t num\+Grade\+Categories)
+\begin{DoxyCompactList}\small\item\em Prompts the user to fill the student grades array with valid grades. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{HarttJacobHW04_8c_a3037bb43a1667f4eb388ca4f2f0635e3}{get\+Grade}} (unsigned int student\+Num, unsigned int grade\+Category\+Num)
+\begin{DoxyCompactList}\small\item\em Gets a valid grade. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{HarttJacobHW04_8c_a798d73dc2e0ed3fd0f980d5bee0f5ada}{is\+Grade\+Valid}} (double grade)
+\begin{DoxyCompactList}\small\item\em Determines whether the input can be considered a valid grade. \end{DoxyCompactList}\item 
+char \mbox{\hyperlink{HarttJacobHW04_8c_a311dd3c6f78ed4e81c734ebc0ff27046}{letter\+Grade}} (double grade)
+\begin{DoxyCompactList}\small\item\em Returns the corresponding grade letter for a valid grade in the class. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{HarttJacobHW04_8c_a840291bc02cba5474a4cb46a9b9566fe}{main}} (void)
+\begin{DoxyCompactList}\small\item\em The main function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{HarttJacobHW04_8c_aa1ff24333dec26c76acb3eeb4a11499e}\label{HarttJacobHW04_8c_aa1ff24333dec26c76acb3eeb4a11499e}} 
+const double \mbox{\hyperlink{HarttJacobHW04_8c_aa1ff24333dec26c76acb3eeb4a11499e}{GRADE\+\_\+\+CATEGORY\+\_\+\+WEIGHTS}} \mbox{[}$\,$\mbox{]} = \{0.\+1, 0.\+3, 0.\+3, 0.\+15, 0.\+15\}
+\begin{DoxyCompactList}\small\item\em An array containing all of the weights for the grade categories in order. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+CS2060.\+002 Homework Assignment \#4. 
+
+\begin{DoxyAuthor}{Author}
+Jacob Hartt (\href{mailto:jacobjhartt@gmail.com}{\texttt{ jacobjhartt@gmail.\+com}})
+\end{DoxyAuthor}
+A program that calculates the final grades and class average of a class. \begin{DoxyVersion}{Version}
+1.\+0 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+02-\/23-\/2023 
+\end{DoxyDate}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{HarttJacobHW04_8c_a8e3cbfadb5d227e779cdf59733b7125e}\label{HarttJacobHW04_8c_a8e3cbfadb5d227e779cdf59733b7125e}} 
+\index{HarttJacobHW04.c@{HarttJacobHW04.c}!calcAverage@{calcAverage}}
+\index{calcAverage@{calcAverage}!HarttJacobHW04.c@{HarttJacobHW04.c}}
+\doxysubsubsection{\texorpdfstring{calcAverage()}{calcAverage()}}
+{\footnotesize\ttfamily double calc\+Average (\begin{DoxyParamCaption}\item[{const double}]{arr\mbox{[}$\,$\mbox{]},  }\item[{size\+\_\+t}]{size }\end{DoxyParamCaption})}
+
+
+
+Calculates the average value of an array. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em arr} & the array whose values will be used \\
+\hline
+{\em size} & the size of the array \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The average of the array 
+\end{DoxyReturn}
+\mbox{\Hypertarget{HarttJacobHW04_8c_a795c70bca61b27a3b745b0f1783c66ca}\label{HarttJacobHW04_8c_a795c70bca61b27a3b745b0f1783c66ca}} 
+\index{HarttJacobHW04.c@{HarttJacobHW04.c}!calcFinalGrade@{calcFinalGrade}}
+\index{calcFinalGrade@{calcFinalGrade}!HarttJacobHW04.c@{HarttJacobHW04.c}}
+\doxysubsubsection{\texorpdfstring{calcFinalGrade()}{calcFinalGrade()}}
+{\footnotesize\ttfamily double calc\+Final\+Grade (\begin{DoxyParamCaption}\item[{const double}]{student\+Grades\mbox{[}$\,$\mbox{]}\mbox{[}\+GRADE\+\_\+\+CATEGORIES\mbox{]},  }\item[{unsigned int}]{student\+Num,  }\item[{unsigned int}]{num\+Grade\+Categories }\end{DoxyParamCaption})}
+
+
+
+Calculates the final grade of a student for the class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em student\+Grades} & the input 2D array of class grades \\
+\hline
+{\em student\+Num} & the students number / row in the 2D array \\
+\hline
+{\em num\+Grade\+Categories} & the number of grade categories stored in the array \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The final grade of a student 
+\end{DoxyReturn}
+\mbox{\Hypertarget{HarttJacobHW04_8c_a47bf6a5b31f3fe7f2ed74de27ccaaa65}\label{HarttJacobHW04_8c_a47bf6a5b31f3fe7f2ed74de27ccaaa65}} 
+\index{HarttJacobHW04.c@{HarttJacobHW04.c}!enterGrades@{enterGrades}}
+\index{enterGrades@{enterGrades}!HarttJacobHW04.c@{HarttJacobHW04.c}}
+\doxysubsubsection{\texorpdfstring{enterGrades()}{enterGrades()}}
+{\footnotesize\ttfamily void enter\+Grades (\begin{DoxyParamCaption}\item[{double}]{student\+Grades\mbox{[}$\,$\mbox{]}\mbox{[}\+GRADE\+\_\+\+CATEGORIES\mbox{]},  }\item[{size\+\_\+t}]{num\+Students,  }\item[{size\+\_\+t}]{num\+Grade\+Categories }\end{DoxyParamCaption})}
+
+
+
+Prompts the user to fill the student grades array with valid grades. 
+
+\begin{DoxyPrecond}{Precondition}
+num\+Students is the number of rows in student\+Grades. 
+\end{DoxyPrecond}
+
+\begin{DoxyParams}{Parameters}
+{\em student\+Grades} & 2D array of doubles which will store the input grades \\
+\hline
+{\em num\+Students} & the number of rows in student\+Grades \\
+\hline
+{\em num\+Grade\+Categories} & the number of columns in student\+Grades \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{HarttJacobHW04_8c_a3037bb43a1667f4eb388ca4f2f0635e3}\label{HarttJacobHW04_8c_a3037bb43a1667f4eb388ca4f2f0635e3}} 
+\index{HarttJacobHW04.c@{HarttJacobHW04.c}!getGrade@{getGrade}}
+\index{getGrade@{getGrade}!HarttJacobHW04.c@{HarttJacobHW04.c}}
+\doxysubsubsection{\texorpdfstring{getGrade()}{getGrade()}}
+{\footnotesize\ttfamily double get\+Grade (\begin{DoxyParamCaption}\item[{unsigned int}]{student\+Num,  }\item[{unsigned int}]{grade\+Category\+Num }\end{DoxyParamCaption})}
+
+
+
+Gets a valid grade. 
+
+Repeatedly prompts the user for a valid input until one is entered, which the function then returns.
+
+
+\begin{DoxyParams}{Parameters}
+{\em student\+Num} & the number of the student who\textquotesingle{}s grade is being retreive \\
+\hline
+{\em grade\+Category\+Num} & the category number of the grade being retreived \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A valid grade value 
+\end{DoxyReturn}
+\mbox{\Hypertarget{HarttJacobHW04_8c_a798d73dc2e0ed3fd0f980d5bee0f5ada}\label{HarttJacobHW04_8c_a798d73dc2e0ed3fd0f980d5bee0f5ada}} 
+\index{HarttJacobHW04.c@{HarttJacobHW04.c}!isGradeValid@{isGradeValid}}
+\index{isGradeValid@{isGradeValid}!HarttJacobHW04.c@{HarttJacobHW04.c}}
+\doxysubsubsection{\texorpdfstring{isGradeValid()}{isGradeValid()}}
+{\footnotesize\ttfamily bool is\+Grade\+Valid (\begin{DoxyParamCaption}\item[{double}]{grade }\end{DoxyParamCaption})}
+
+
+
+Determines whether the input can be considered a valid grade. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em grade} & the numerical value to determine whether or not is a valid grade \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Whether or not the input grade is valid 
+\end{DoxyReturn}
+\mbox{\Hypertarget{HarttJacobHW04_8c_a311dd3c6f78ed4e81c734ebc0ff27046}\label{HarttJacobHW04_8c_a311dd3c6f78ed4e81c734ebc0ff27046}} 
+\index{HarttJacobHW04.c@{HarttJacobHW04.c}!letterGrade@{letterGrade}}
+\index{letterGrade@{letterGrade}!HarttJacobHW04.c@{HarttJacobHW04.c}}
+\doxysubsubsection{\texorpdfstring{letterGrade()}{letterGrade()}}
+{\footnotesize\ttfamily char letter\+Grade (\begin{DoxyParamCaption}\item[{double}]{grade }\end{DoxyParamCaption})}
+
+
+
+Returns the corresponding grade letter for a valid grade in the class. 
+
+\begin{DoxyPrecond}{Precondition}
+The input grade is valid. 
+\end{DoxyPrecond}
+
+\begin{DoxyParams}{Parameters}
+{\em grade} & the numerical value for a single grade category of a student \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The corresponding grade letter for the input grade 
+\end{DoxyReturn}
+\mbox{\Hypertarget{HarttJacobHW04_8c_a840291bc02cba5474a4cb46a9b9566fe}\label{HarttJacobHW04_8c_a840291bc02cba5474a4cb46a9b9566fe}} 
+\index{HarttJacobHW04.c@{HarttJacobHW04.c}!main@{main}}
+\index{main@{main}!HarttJacobHW04.c@{HarttJacobHW04.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+The main function. 
+
+\begin{DoxyReturn}{Returns}
+The exit value 
+\end{DoxyReturn}
