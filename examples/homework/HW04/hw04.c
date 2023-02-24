@@ -42,6 +42,16 @@ const double GRADE_CATEGORY_WEIGHTS[] = {0.1, 0.3, 0.3, 0.15, 0.15};
  */
 double calcAverage(const double arr[], size_t size);
 
+//! Calculates the final grade of a student for the class.
+/*!
+  \param studentGrades the input 2D array of class grades
+  \param studentNum the students number / row in the 2D array
+  \param numGradeCategories the number of grade categories stored in the array
+  \return The final grade of a student
+ */
+double calcFinalGrade(double studentGrades[][GRADE_CATEGORIES],
+                      unsigned int studentNum, unsigned int numGradeCategories);
+
 //! Prompts the user to fill the student grades array with valid grades.
 /*!
   \pre numStudents is the number of rows in studentGrades.
@@ -103,7 +113,7 @@ int main(void)
 
     puts("Grades entered for each student");
     for (int student = 0; student < STUDENTS; student++) {
-        printf("Student %d:", student);
+        printf("Student %d:", student + 1);
 
         for (int gradeCategoryNum = 0; gradeCategoryNum < GRADE_CATEGORIES;
                                        gradeCategoryNum++) {
@@ -111,6 +121,16 @@ int main(void)
         }
 
         puts("");
+    }
+    puts("");
+
+    puts("Final grades for students, respectively:"); 
+    for (int studentNum = 0; studentNum < STUDENTS; studentNum++) {
+        double finalGrade = calcFinalGrade(studentGrades, studentNum,
+                                           GRADE_CATEGORIES);
+
+        printf("Student %d: %3.1lf %c\n", studentNum + 1, finalGrade,
+               letterGrade(finalGrade));
     }
 
     puts("Hello world!");
@@ -127,8 +147,23 @@ double calcAverage(const double arr[], size_t size)
     return sum / size;
 }
 
+double calcFinalGrade(double studentGrades[][GRADE_CATEGORIES],
+                      unsigned int studentNum, unsigned int numGradeCategories)
+{
+    double sum = 0.0;
+
+    for (int gradeCategoryNum = 0; gradeCategoryNum < numGradeCategories;
+                                   gradeCategoryNum++) {
+        sum += studentGrades[studentNum][gradeCategoryNum] *
+               GRADE_CATEGORY_WEIGHTS[gradeCategoryNum];
+    }
+    
+    return sum;
+}
+
 void enterGrades(double studentGrades[][GRADE_CATEGORIES], size_t numStudents, 
-                 size_t numGradeCategories) {
+                 size_t numGradeCategories)
+{
     for (int studentNum = 0; studentNum < numStudents; studentNum++) {
         for (int gradeCategoryNum = 0; gradeCategoryNum < numGradeCategories;
                                        gradeCategoryNum++) {
