@@ -7,6 +7,7 @@
   \date 02-23-2023
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 
 //! A string indicating the the number associated with each grade category.
@@ -41,6 +42,13 @@ const double GRADE_CATEGORY_WEIGHTS[] = {0.1, 0.3, 0.3, 0.15, 0.15};
  */
 double calcAverage(const double arr[], size_t size);
 
+//! Determines whether the input can be considered a valid grade.
+/*!
+  \param grade the numerical value to determine whether or not is a valid grade
+  \return Whether or not the input grade is valid
+ */
+bool isGradeValid(double grade);
+
 //! Returns the corresponding grade letter for a valid grade in the class.
 /*!
   \pre The input grade is valid.
@@ -56,9 +64,9 @@ char letterGrade(double grade);
  */
 int main(void)
 {
-    printf("%c\n", letterGrade(101.23));
-    printf("%c\n", letterGrade(72));
-    printf("%c\n", letterGrade(32.23));
+    printf("%d\n", isGradeValid(-1));
+    printf("%d\n", isGradeValid(32.23424));
+    printf("%d\n", isGradeValid(106));
 
     puts("Hello world!");
 }
@@ -72,6 +80,11 @@ double calcAverage(const double arr[], size_t size)
     }
 
     return sum / size;
+}
+
+bool isGradeValid(double grade)
+{
+    return (grade >= MIN_GRADE) && (grade <= MAX_GRADE);
 }
 
 char letterGrade(double grade)

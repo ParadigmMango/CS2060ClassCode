@@ -5,6 +5,7 @@
 CS2060.\+002 Homework Assignment \#4.  
 
 
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
 {\ttfamily \#include $<$stdio.\+h$>$}\newline
 \doxysubsection*{Macros}
 \begin{DoxyCompactItemize}
@@ -41,6 +42,8 @@ CS2060.\+002 Homework Assignment \#4.
 \item 
 double \mbox{\hyperlink{hw04_8c_a8e3cbfadb5d227e779cdf59733b7125e}{calc\+Average}} (const double arr\mbox{[}$\,$\mbox{]}, size\+\_\+t size)
 \begin{DoxyCompactList}\small\item\em Calculates the average value of an array. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{hw04_8c_a798d73dc2e0ed3fd0f980d5bee0f5ada}{is\+Grade\+Valid}} (double grade)
+\begin{DoxyCompactList}\small\item\em Determines whether the input can be considered a valid grade. \end{DoxyCompactList}\item 
 char \mbox{\hyperlink{hw04_8c_a311dd3c6f78ed4e81c734ebc0ff27046}{letter\+Grade}} (double grade)
 \begin{DoxyCompactList}\small\item\em Returns the corresponding grade letter for a valid grade in the class. \end{DoxyCompactList}\item 
 int \mbox{\hyperlink{hw04_8c_a840291bc02cba5474a4cb46a9b9566fe}{main}} (void)
@@ -87,6 +90,24 @@ Calculates the average value of an array.
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The average of the array 
+\end{DoxyReturn}
+\mbox{\Hypertarget{hw04_8c_a798d73dc2e0ed3fd0f980d5bee0f5ada}\label{hw04_8c_a798d73dc2e0ed3fd0f980d5bee0f5ada}} 
+\index{hw04.c@{hw04.c}!isGradeValid@{isGradeValid}}
+\index{isGradeValid@{isGradeValid}!hw04.c@{hw04.c}}
+\doxysubsubsection{\texorpdfstring{isGradeValid()}{isGradeValid()}}
+{\footnotesize\ttfamily bool is\+Grade\+Valid (\begin{DoxyParamCaption}\item[{double}]{grade }\end{DoxyParamCaption})}
+
+
+
+Determines whether the input can be considered a valid grade. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em grade} & the numerical value to determine whether or not is a valid grade \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Whether or not the input grade is valid 
 \end{DoxyReturn}
 \mbox{\Hypertarget{hw04_8c_a311dd3c6f78ed4e81c734ebc0ff27046}\label{hw04_8c_a311dd3c6f78ed4e81c734ebc0ff27046}} 
 \index{hw04.c@{hw04.c}!letterGrade@{letterGrade}}
