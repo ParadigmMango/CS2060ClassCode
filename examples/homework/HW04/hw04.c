@@ -95,10 +95,12 @@ char letterGrade(double grade);
  */
 int main(void)
 {
+    // Print general category information
     puts("This program will calculate the grades for these categories:");
     puts(CATEGORIES);
     puts("");
 
+    // Print the category weights
     puts("The category weights are:");
     for (int gradeCategoryNum = 0; gradeCategoryNum < GRADE_CATEGORIES;
                                    gradeCategoryNum++) {
@@ -107,11 +109,13 @@ int main(void)
     }
     puts("");
 
+    // Retreive the student grades from the user
     double studentGrades[STUDENTS][GRADE_CATEGORIES];
 
     enterGrades(studentGrades, STUDENTS, GRADE_CATEGORIES);
 
-    puts("Grades entered for each student");
+    // Display the entered student grades
+    puts("Grades entered for each student:");
     for (int student = 0; student < STUDENTS; student++) {
         printf("Student %d:", student + 1);
 
@@ -124,6 +128,7 @@ int main(void)
     }
     puts("");
 
+    // Calculate and display the final grades of each student
     double finalGrades[STUDENTS];
 
     puts("Final grades for students, respectively:"); 
@@ -138,17 +143,20 @@ int main(void)
     }
     puts("");
 
+    // Calculate and display the class average
     printf("Class average: %3.1lf\n", calcAverage(finalGrades, STUDENTS));
 }
 
 double calcAverage(const double arr[], size_t size)
 {
+    // Calculate the sum of the array
     double sum = 0.0;
 
     for (int i = 0; i < size; i++) {
         sum += arr[i];
     }
 
+    // Return the sum divided by the total elements
     return sum / size;
 }
 
@@ -157,6 +165,7 @@ double calcFinalGrade(const double studentGrades[][GRADE_CATEGORIES],
 {
     double sum = 0.0;
 
+    // Add the product of each weight and grade category to the sum
     for (int gradeCategoryNum = 0; gradeCategoryNum < numGradeCategories;
                                    gradeCategoryNum++) {
         sum += studentGrades[studentNum][gradeCategoryNum] *
@@ -193,6 +202,7 @@ double getGrade(unsigned int studentNum, unsigned int gradeCategoryNum)
         
         retVal = scanf("%lf", &grade);
 
+        // Clear the buffer
         while (getchar() != '\n');
 
         isInputValid = (retVal >= 1) && isGradeValid(grade);
