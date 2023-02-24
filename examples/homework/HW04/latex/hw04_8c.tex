@@ -6,6 +6,36 @@ CS2060.\+002 Homework Assignment \#4.
 
 
 {\ttfamily \#include $<$stdio.\+h$>$}\newline
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{hw04_8c_af46ab44a0a70da17b70d6cb99174a392}\label{hw04_8c_af46ab44a0a70da17b70d6cb99174a392}} 
+\#define \mbox{\hyperlink{hw04_8c_af46ab44a0a70da17b70d6cb99174a392}{CATEGORIES}}~\char`\"{}1. Learning Activity 2. Homework 3. Project 4. Midterm 5. Final\char`\"{}
+\begin{DoxyCompactList}\small\item\em A string indicating the the number associated with each grade category. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{hw04_8c_ac266cd5154d4546aaa7e985d37f24e7c}\label{hw04_8c_ac266cd5154d4546aaa7e985d37f24e7c}} 
+\#define \mbox{\hyperlink{hw04_8c_ac266cd5154d4546aaa7e985d37f24e7c}{GRADE\+\_\+\+CATEGORIES}}~5
+\begin{DoxyCompactList}\small\item\em The number of grade categories for the class. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{hw04_8c_a63548e6c24d27167f2055ed498355e66}\label{hw04_8c_a63548e6c24d27167f2055ed498355e66}} 
+\#define \mbox{\hyperlink{hw04_8c_a63548e6c24d27167f2055ed498355e66}{MAX\+\_\+\+GRADE}}~105.\+0
+\begin{DoxyCompactList}\small\item\em The maximum grade possible in a grade category. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{hw04_8c_a19f440f2d51871412ede28caee70994f}\label{hw04_8c_a19f440f2d51871412ede28caee70994f}} 
+\#define \mbox{\hyperlink{hw04_8c_a19f440f2d51871412ede28caee70994f}{MIN\+\_\+\+GRADE}}~0.\+0
+\begin{DoxyCompactList}\small\item\em The minimum grade possible in a grade category. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{hw04_8c_ae5a58fd2d24f603d7d9c2dbefac331e9}\label{hw04_8c_ae5a58fd2d24f603d7d9c2dbefac331e9}} 
+\#define \mbox{\hyperlink{hw04_8c_ae5a58fd2d24f603d7d9c2dbefac331e9}{STUDENTS}}~4
+\begin{DoxyCompactList}\small\item\em The total number of students in the class. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{hw04_8c_a9f0db42f138f3fbac5e23008664d1184}\label{hw04_8c_a9f0db42f138f3fbac5e23008664d1184}} 
+\#define \mbox{\hyperlink{hw04_8c_a9f0db42f138f3fbac5e23008664d1184}{A\+\_\+\+MIN\+\_\+\+GRADE}}~90.\+0
+\begin{DoxyCompactList}\small\item\em The minimum grade required to earn an A in the class. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{hw04_8c_a07a0fa90bfb33a7deb629a45b2da402c}\label{hw04_8c_a07a0fa90bfb33a7deb629a45b2da402c}} 
+\#define \mbox{\hyperlink{hw04_8c_a07a0fa90bfb33a7deb629a45b2da402c}{B\+\_\+\+MIN\+\_\+\+GRADE}}~80.\+0
+\begin{DoxyCompactList}\small\item\em The minimum grade required to earn a B in the class. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{hw04_8c_a933d614b9f4d55e1fbb68b5326f2677b}\label{hw04_8c_a933d614b9f4d55e1fbb68b5326f2677b}} 
+\#define \mbox{\hyperlink{hw04_8c_a933d614b9f4d55e1fbb68b5326f2677b}{C\+\_\+\+MIN\+\_\+\+GRADE}}~70.\+0
+\begin{DoxyCompactList}\small\item\em The minimum grade required to earn a C in the class. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{hw04_8c_a9362d01747a5063d87bd27d37e452d1c}\label{hw04_8c_a9362d01747a5063d87bd27d37e452d1c}} 
+\#define \mbox{\hyperlink{hw04_8c_a9362d01747a5063d87bd27d37e452d1c}{D\+\_\+\+MIN\+\_\+\+GRADE}}~60.\+0
+\begin{DoxyCompactList}\small\item\em The minimum grade required to earn a D in the class. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -13,6 +43,12 @@ double \mbox{\hyperlink{hw04_8c_a8e3cbfadb5d227e779cdf59733b7125e}{calc\+Average
 \begin{DoxyCompactList}\small\item\em Calculates the average value of an array. \end{DoxyCompactList}\item 
 int \mbox{\hyperlink{hw04_8c_a840291bc02cba5474a4cb46a9b9566fe}{main}} (void)
 \begin{DoxyCompactList}\small\item\em The main function. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{hw04_8c_aa1ff24333dec26c76acb3eeb4a11499e}\label{hw04_8c_aa1ff24333dec26c76acb3eeb4a11499e}} 
+const double \mbox{\hyperlink{hw04_8c_aa1ff24333dec26c76acb3eeb4a11499e}{GRADE\+\_\+\+CATEGORY\+\_\+\+WEIGHTS}} \mbox{[}$\,$\mbox{]} = \{0.\+1, 0.\+3, 0.\+3, 0.\+15, 0.\+15\}
+\begin{DoxyCompactList}\small\item\em An array containing all of the weights for the grade categories in order. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}

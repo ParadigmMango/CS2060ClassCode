@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['calcaverage_0',['calcAverage',['../hw04_8c.html#a8e3cbfadb5d227e779cdf59733b7125e',1,'hw04.c']]]
+  ['a_5fmin_5fgrade_0',['A_MIN_GRADE',['../hw04_8c.html#a9f0db42f138f3fbac5e23008664d1184',1,'hw04.c']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['hw04_2ec_1',['hw04.c',['../hw04_8c.html',1,'']]]
+  ['b_5fmin_5fgrade_1',['B_MIN_GRADE',['../hw04_8c.html#a07a0fa90bfb33a7deb629a45b2da402c',1,'hw04.c']]]
 ];
