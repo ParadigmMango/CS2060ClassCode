@@ -42,6 +42,8 @@ CS2060.\+002 Homework Assignment \#4.
 \item 
 double \mbox{\hyperlink{hw04_8c_a8e3cbfadb5d227e779cdf59733b7125e}{calc\+Average}} (const double arr\mbox{[}$\,$\mbox{]}, size\+\_\+t size)
 \begin{DoxyCompactList}\small\item\em Calculates the average value of an array. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{hw04_8c_a47bf6a5b31f3fe7f2ed74de27ccaaa65}{enter\+Grades}} (double student\+Grades\mbox{[}$\,$\mbox{]}\mbox{[}\mbox{\hyperlink{hw04_8c_ac266cd5154d4546aaa7e985d37f24e7c}{GRADE\+\_\+\+CATEGORIES}}\mbox{]}, size\+\_\+t num\+Students, size\+\_\+t num\+Grade\+Categories)
+\begin{DoxyCompactList}\small\item\em Prompts the user to fill the student grades array with valid grades. \end{DoxyCompactList}\item 
 double \mbox{\hyperlink{hw04_8c_a3037bb43a1667f4eb388ca4f2f0635e3}{get\+Grade}} (unsigned int student\+Num, unsigned int grade\+Category\+Num)
 \begin{DoxyCompactList}\small\item\em Gets a valid grade. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{hw04_8c_a798d73dc2e0ed3fd0f980d5bee0f5ada}{is\+Grade\+Valid}} (double grade)
@@ -93,6 +95,28 @@ Calculates the average value of an array.
 \begin{DoxyReturn}{Returns}
 The average of the array 
 \end{DoxyReturn}
+\mbox{\Hypertarget{hw04_8c_a47bf6a5b31f3fe7f2ed74de27ccaaa65}\label{hw04_8c_a47bf6a5b31f3fe7f2ed74de27ccaaa65}} 
+\index{hw04.c@{hw04.c}!enterGrades@{enterGrades}}
+\index{enterGrades@{enterGrades}!hw04.c@{hw04.c}}
+\doxysubsubsection{\texorpdfstring{enterGrades()}{enterGrades()}}
+{\footnotesize\ttfamily void enter\+Grades (\begin{DoxyParamCaption}\item[{double}]{student\+Grades\mbox{[}$\,$\mbox{]}\mbox{[}\+GRADE\+\_\+\+CATEGORIES\mbox{]},  }\item[{size\+\_\+t}]{num\+Students,  }\item[{size\+\_\+t}]{num\+Grade\+Categories }\end{DoxyParamCaption})}
+
+
+
+Prompts the user to fill the student grades array with valid grades. 
+
+\begin{DoxyPrecond}{Precondition}
+num\+Students is the number of rows in student\+Grades. 
+\end{DoxyPrecond}
+
+\begin{DoxyParams}{Parameters}
+{\em student\+Grades} & 2D array of doubles which will store the input grades \\
+\hline
+{\em num\+Students} & the number of rows in student\+Grades \\
+\hline
+{\em num\+Grade\+Categories} & the number of columns in student\+Grades \\
+\hline
+\end{DoxyParams}
 \mbox{\Hypertarget{hw04_8c_a3037bb43a1667f4eb388ca4f2f0635e3}\label{hw04_8c_a3037bb43a1667f4eb388ca4f2f0635e3}} 
 \index{hw04.c@{hw04.c}!getGrade@{getGrade}}
 \index{getGrade@{getGrade}!hw04.c@{hw04.c}}

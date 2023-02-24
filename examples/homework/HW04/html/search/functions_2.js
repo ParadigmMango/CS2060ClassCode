@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['isgradevalid_19',['isGradeValid',['../hw04_8c.html#a798d73dc2e0ed3fd0f980d5bee0f5ada',1,'hw04.c']]]
+  ['getgrade_20',['getGrade',['../hw04_8c.html#a3037bb43a1667f4eb388ca4f2f0635e3',1,'hw04.c']]]
 ];

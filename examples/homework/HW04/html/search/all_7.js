@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['lettergrade_11',['letterGrade',['../hw04_8c.html#a311dd3c6f78ed4e81c734ebc0ff27046',1,'hw04.c']]]
+  ['isgradevalid_11',['isGradeValid',['../hw04_8c.html#a798d73dc2e0ed3fd0f980d5bee0f5ada',1,'hw04.c']]]
 ];

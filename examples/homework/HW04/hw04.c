@@ -42,6 +42,16 @@ const double GRADE_CATEGORY_WEIGHTS[] = {0.1, 0.3, 0.3, 0.15, 0.15};
  */
 double calcAverage(const double arr[], size_t size);
 
+//! Prompts the user to fill the student grades array with valid grades.
+/*!
+  \pre numStudents is the number of rows in studentGrades.
+  \param studentGrades 2D array of doubles which will store the input grades
+  \param numStudents the number of rows in studentGrades
+  \param numGradeCategories the number of columns in studentGrades
+ */
+void enterGrades(double studentGrades[][GRADE_CATEGORIES], size_t numStudents, 
+                 size_t numGradeCategories);
+
 //! Gets a valid grade.
 /*!
   Repeatedly prompts the user for a valid input until one is entered, which the
@@ -75,9 +85,21 @@ char letterGrade(double grade);
  */
 int main(void)
 {
-    printf("%lf\n", getGrade(1,1));
-    printf("%lf\n", getGrade(1,2));
-    printf("%lf\n", getGrade(2,1));
+    double studentGrades[STUDENTS][GRADE_CATEGORIES];
+
+    enterGrades(studentGrades, STUDENTS, GRADE_CATEGORIES);
+
+    puts("Grades entered for each student");
+    for (int student = 0; student < STUDENTS; student++) {
+        printf("Student %d:", student);
+
+        for (int gradeCategoryNum = 0; gradeCategoryNum < GRADE_CATEGORIES;
+                                       gradeCategoryNum++) {
+            printf("  %3.1lf", studentGrades[student][gradeCategoryNum]);
+        }
+
+        puts("");
+    }
 
     puts("Hello world!");
 }
@@ -93,6 +115,19 @@ double calcAverage(const double arr[], size_t size)
     return sum / size;
 }
 
+void enterGrades(double studentGrades[][GRADE_CATEGORIES], size_t numStudents, 
+                 size_t numGradeCategories) {
+    for (int studentNum = 0; studentNum < numStudents; studentNum++) {
+        for (int gradeCategoryNum = 0; gradeCategoryNum < numGradeCategories;
+                                       gradeCategoryNum++) {
+            studentGrades[studentNum][gradeCategoryNum] = getGrade(studentNum,
+                                                            gradeCategoryNum);
+        }
+
+        puts("");
+    }
+}
+
 double getGrade(unsigned int studentNum, unsigned int gradeCategoryNum)
 {
     int retVal;
@@ -102,7 +137,7 @@ double getGrade(unsigned int studentNum, unsigned int gradeCategoryNum)
 
     do {
         printf("Enter a valid number for student %d's category %d grade: ",
-               studentNum, gradeCategoryNum);
+               studentNum + 1, gradeCategoryNum + 1);
         
         retVal = scanf("%lf", &grade);
 
