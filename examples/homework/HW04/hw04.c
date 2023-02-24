@@ -49,7 +49,7 @@ double calcAverage(const double arr[], size_t size);
   \param numGradeCategories the number of grade categories stored in the array
   \return The final grade of a student
  */
-double calcFinalGrade(double studentGrades[][GRADE_CATEGORIES],
+double calcFinalGrade(const double studentGrades[][GRADE_CATEGORIES],
                       unsigned int studentNum, unsigned int numGradeCategories);
 
 //! Prompts the user to fill the student grades array with valid grades.
@@ -124,16 +124,21 @@ int main(void)
     }
     puts("");
 
+    double finalGrades[STUDENTS];
+
     puts("Final grades for students, respectively:"); 
     for (int studentNum = 0; studentNum < STUDENTS; studentNum++) {
         double finalGrade = calcFinalGrade(studentGrades, studentNum,
                                            GRADE_CATEGORIES);
 
+        finalGrades[studentNum] = finalGrade;
+
         printf("Student %d: %3.1lf %c\n", studentNum + 1, finalGrade,
                letterGrade(finalGrade));
     }
+    puts("");
 
-    puts("Hello world!");
+    printf("Class average: %3.1lf\n", calcAverage(finalGrades, STUDENTS));
 }
 
 double calcAverage(const double arr[], size_t size)
@@ -147,7 +152,7 @@ double calcAverage(const double arr[], size_t size)
     return sum / size;
 }
 
-double calcFinalGrade(double studentGrades[][GRADE_CATEGORIES],
+double calcFinalGrade(const double studentGrades[][GRADE_CATEGORIES],
                       unsigned int studentNum, unsigned int numGradeCategories)
 {
     double sum = 0.0;
