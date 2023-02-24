@@ -41,6 +41,14 @@ const double GRADE_CATEGORY_WEIGHTS[] = {0.1, 0.3, 0.3, 0.15, 0.15};
  */
 double calcAverage(const double arr[], size_t size);
 
+//! Returns the corresponding grade letter for a valid grade in the class.
+/*!
+  \pre The input grade is valid.
+  \param grade the numerical value for a single grade category of a student
+  \return The corresponding grade letter for the input grade
+ */
+char letterGrade(double grade);
+
 
 //! The main function.
 /*!
@@ -48,12 +56,9 @@ double calcAverage(const double arr[], size_t size);
  */
 int main(void)
 {
-    double testArr1[] = {1, 2, 3};
-    double testArr2[] = {-1.1, 2.2, 0, 333};
-    double testArr3[] = {0, 0, 2};
-
-    printf("%lf %lf %lf", calcAverage(testArr1, 3), calcAverage(testArr2, 4),
-                          calcAverage(testArr3, 3));
+    printf("%c\n", letterGrade(101.23));
+    printf("%c\n", letterGrade(72));
+    printf("%c\n", letterGrade(32.23));
 
     puts("Hello world!");
 }
@@ -67,4 +72,23 @@ double calcAverage(const double arr[], size_t size)
     }
 
     return sum / size;
+}
+
+char letterGrade(double grade)
+{
+    char gradeLetter;
+
+    if (grade >= A_MIN_GRADE) {
+        gradeLetter = 'A';
+    } else if (grade >= B_MIN_GRADE) {
+        gradeLetter = 'B';
+    } else if (grade >= C_MIN_GRADE) {
+        gradeLetter = 'C';
+    } else if (grade >= D_MIN_GRADE) {
+        gradeLetter = 'D';
+    } else {
+        gradeLetter = 'F';
+    }
+
+    return gradeLetter;
 }
