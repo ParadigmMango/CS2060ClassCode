@@ -85,6 +85,18 @@ char letterGrade(double grade);
  */
 int main(void)
 {
+    puts("This program will calculate the grades for these categories:");
+    puts(CATEGORIES);
+    puts("");
+
+    puts("The category weights are:");
+    for (int gradeCategoryNum = 0; gradeCategoryNum < GRADE_CATEGORIES;
+                                   gradeCategoryNum++) {
+        printf("Category %d weight is %.2lf\n", gradeCategoryNum + 1,
+               GRADE_CATEGORY_WEIGHTS[gradeCategoryNum]);
+    }
+    puts("");
+
     double studentGrades[STUDENTS][GRADE_CATEGORIES];
 
     enterGrades(studentGrades, STUDENTS, GRADE_CATEGORIES);
