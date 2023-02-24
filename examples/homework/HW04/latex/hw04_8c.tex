@@ -42,6 +42,8 @@ CS2060.\+002 Homework Assignment \#4.
 \item 
 double \mbox{\hyperlink{hw04_8c_a8e3cbfadb5d227e779cdf59733b7125e}{calc\+Average}} (const double arr\mbox{[}$\,$\mbox{]}, size\+\_\+t size)
 \begin{DoxyCompactList}\small\item\em Calculates the average value of an array. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{hw04_8c_a3037bb43a1667f4eb388ca4f2f0635e3}{get\+Grade}} (unsigned int student\+Num, unsigned int grade\+Category\+Num)
+\begin{DoxyCompactList}\small\item\em Gets a valid grade. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{hw04_8c_a798d73dc2e0ed3fd0f980d5bee0f5ada}{is\+Grade\+Valid}} (double grade)
 \begin{DoxyCompactList}\small\item\em Determines whether the input can be considered a valid grade. \end{DoxyCompactList}\item 
 char \mbox{\hyperlink{hw04_8c_a311dd3c6f78ed4e81c734ebc0ff27046}{letter\+Grade}} (double grade)
@@ -90,6 +92,28 @@ Calculates the average value of an array.
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 The average of the array 
+\end{DoxyReturn}
+\mbox{\Hypertarget{hw04_8c_a3037bb43a1667f4eb388ca4f2f0635e3}\label{hw04_8c_a3037bb43a1667f4eb388ca4f2f0635e3}} 
+\index{hw04.c@{hw04.c}!getGrade@{getGrade}}
+\index{getGrade@{getGrade}!hw04.c@{hw04.c}}
+\doxysubsubsection{\texorpdfstring{getGrade()}{getGrade()}}
+{\footnotesize\ttfamily double get\+Grade (\begin{DoxyParamCaption}\item[{unsigned int}]{student\+Num,  }\item[{unsigned int}]{grade\+Category\+Num }\end{DoxyParamCaption})}
+
+
+
+Gets a valid grade. 
+
+Repeatedly prompts the user for a valid input until one is entered, which the function then returns.
+
+
+\begin{DoxyParams}{Parameters}
+{\em student\+Num} & the number of the student who\textquotesingle{}s grade is being retreive \\
+\hline
+{\em grade\+Category\+Num} & the category number of the grade being retreived \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A valid grade value 
 \end{DoxyReturn}
 \mbox{\Hypertarget{hw04_8c_a798d73dc2e0ed3fd0f980d5bee0f5ada}\label{hw04_8c_a798d73dc2e0ed3fd0f980d5bee0f5ada}} 
 \index{hw04.c@{hw04.c}!isGradeValid@{isGradeValid}}

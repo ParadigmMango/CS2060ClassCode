@@ -42,6 +42,17 @@ const double GRADE_CATEGORY_WEIGHTS[] = {0.1, 0.3, 0.3, 0.15, 0.15};
  */
 double calcAverage(const double arr[], size_t size);
 
+//! Gets a valid grade.
+/*!
+  Repeatedly prompts the user for a valid input until one is entered, which the
+  function then returns.
+
+  \param studentNum the number of the student who's grade is being retreive
+  \param gradeCategoryNum the category number of the grade being retreived
+  \return A valid grade value 
+ */
+double getGrade(unsigned int studentNum, unsigned int gradeCategoryNum);
+
 //! Determines whether the input can be considered a valid grade.
 /*!
   \param grade the numerical value to determine whether or not is a valid grade
@@ -64,9 +75,9 @@ char letterGrade(double grade);
  */
 int main(void)
 {
-    printf("%d\n", isGradeValid(-1));
-    printf("%d\n", isGradeValid(32.23424));
-    printf("%d\n", isGradeValid(106));
+    printf("%lf\n", getGrade(1,1));
+    printf("%lf\n", getGrade(1,2));
+    printf("%lf\n", getGrade(2,1));
 
     puts("Hello world!");
 }
@@ -80,6 +91,27 @@ double calcAverage(const double arr[], size_t size)
     }
 
     return sum / size;
+}
+
+double getGrade(unsigned int studentNum, unsigned int gradeCategoryNum)
+{
+    int retVal;
+    double grade;
+
+    bool isInputValid;
+
+    do {
+        printf("Enter a valid number for student %d's category %d grade: ",
+               studentNum, gradeCategoryNum);
+        
+        retVal = scanf("%lf", &grade);
+
+        while (getchar() != '\n');
+
+        isInputValid = (retVal >= 1) && isGradeValid(grade);
+    } while (!isInputValid);
+
+    return grade;
 }
 
 bool isGradeValid(double grade)
