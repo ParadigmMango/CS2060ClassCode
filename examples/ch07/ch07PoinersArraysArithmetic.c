@@ -61,7 +61,7 @@ int main(void)
 
 	// ----------- PART TWO: Pointer to an Array
 	puts("****************************************");
-	puts("Part 2: pointer to an array");
+	puts("PART TWO: pointer to an array");
 
 	int* arrayPtr = array;
 
@@ -79,21 +79,42 @@ int main(void)
     // The below code demonstrates that the values pointed to by an array and an
     // array pointer (pointing to that array) are the same.
 	printf("*array = %d\n", *array);
-	printf("*arrayPtr = %d\n\n", *arrayPtr);
+	printf("*arrayPtr = %d\n", *arrayPtr);
+
+    puts("");
+    puts("");
 
 
 	// ---------- PART THREE : Adding and Subtracting Integers to Pointers
 	puts("****************************************");
-	puts("Part 3: Adding and Subtracting integers to pointers");
-	printf("*(array+ 1) = %d\n", *(array + 1));
+	puts("PART THREE: Adding and Subtracting integers to pointers");
+
+    // Demonstrates the importance of order of operations and (again) the 
+    // similarity of arrays and array pointers in behavior.
+    puts("");
+	printf("*(array + 1) = %d\n", *(array + 1));
 	printf("*array + 1 = %d\n", *array + 1);
-	printf("*(arrayPtr+ 1) = %d\n", *(arrayPtr + 1));
+    puts("");
+	printf("*(arrayPtr + 1) = %d\n", *(arrayPtr + 1));
 	printf("*arrayPtr + 1 = %d\n", *arrayPtr + 1);
-	printf("*(arrayPtr+ 2) =  %d\n", *(arrayPtr + 2));
+
+    // Demonstrates only the importance of order of operations when dealing with
+    // array pointers.
+    puts("");
+	printf("*(arrayPtr + 2) =  %d\n", *(arrayPtr + 2));
 	printf("*arrayPtr + 2 = %d\n", *arrayPtr + 2);
-	printf("*(arrayPtr+ 4) = %d\n", *(arrayPtr + 4));
-	printf("*(arrayPtr+ 5) = %d\n", *(arrayPtr + 5));
-	printf("*(arrayPtr - 1): =%d\n", *(arrayPtr -1 ));
+	printf("*(arrayPtr + 4) = %d\n", *(arrayPtr + 4));
+
+    // Demostrates array pointers reading data which is out of bounds of the
+    // original arrays.
+    puts("");
+	printf("*(arrayPtr + 5) = %d\n", *(arrayPtr + 5));
+	printf("*(arrayPtr - 1) = %d\n", *(arrayPtr - 1));
+
+    // Demonstrates the effects of incrementing and decrementing on array
+    // pointers. Also demonstrates the differing effects that preceding and 
+    // following increment operators can have.
+    puts("");
 	printf("*++arrayPtr = %d\n", *++arrayPtr);
 	printf("*arrayPtr = %d\n", *arrayPtr);
 	printf("*arrayPtr++ = %d\n", *arrayPtr++);
@@ -102,22 +123,34 @@ int main(void)
 	printf("*arrayPtr = %d\n", *arrayPtr);
 	printf("*--arrayPtr = %d\n", *--arrayPtr);
 	printf("*arrayPtr = %d\n", *arrayPtr);
+
+    // Reset the array pointer.
+    puts("");
 	arrayPtr = array;
 	puts("int* arrayPtr = array");
 	printf("*arrayPtr = %d\n", *arrayPtr);
 
 	puts("");
+    puts("");
 
-	//Part 4 Assign Pointer to another pointer and subtracting pointers
-	puts("Assign Pointer to another pointer");
+
+	// ---------- PART FOUR: Assign Pointer to another pointer and subtracting
+    //                       pointers
+	puts("****************************************");
+	puts("PART FOUR: Assign a Pointer to another Pointer");
+
 	int* array2Ptr = &array[3];
+
 	puts("int* array2Ptr = &array[3]");
 	printf("*array2Ptr = %d\n", *array2Ptr);
 	printf("*(array2Ptr +1) = %d\n", *(array2Ptr + 1));
 	printf("*(array2Ptr -1) = %d\n", *(array2Ptr - 1));
-	printf("array2Ptr - arrayPtr = %llu\n", array2Ptr - arrayPtr);
-	printf("arrayPtr - array2Ptr = %llu\n", arrayPtr - array2Ptr);
+	printf("array2Ptr - arrayPtr = %ld\n", array2Ptr - arrayPtr);
+	printf("arrayPtr - array2Ptr = %ld\n", arrayPtr - array2Ptr);
 	puts("Error arrayPtr +array2Ptr = %d\n");
+
+    puts("");
+    puts("");
 
 
 	//Part 5 Refer to Elements in an Array: Pointer Offset and Subscript Notation
