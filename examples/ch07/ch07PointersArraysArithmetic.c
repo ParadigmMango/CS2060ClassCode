@@ -139,22 +139,31 @@ int main(void)
 	puts("****************************************");
 	puts("PART FOUR: Assign a Pointer to another Pointer");
 
+    // Sets the array2Ptr to the 4th element of array.
 	int* array2Ptr = &array[3];
-
 	puts("int* array2Ptr = &array[3]");
+
+    // Shows the values at, before and after the array2Ptr.
 	printf("*array2Ptr = %d\n", *array2Ptr);
 	printf("*(array2Ptr +1) = %d\n", *(array2Ptr + 1));
 	printf("*(array2Ptr -1) = %d\n", *(array2Ptr - 1));
+
+    // Calculates pointer differences.
 	printf("array2Ptr - arrayPtr = %ld\n", array2Ptr - arrayPtr);
 	printf("arrayPtr - array2Ptr = %ld\n", arrayPtr - array2Ptr);
-	puts("Error arrayPtr +array2Ptr = %d\n");
+
+    // The below line of code forms an error as adding pointers could easily
+    // result in an overflow.
+	// puts("Error arrayPtr + array2Ptr = %ld", arrayPtr + array2Ptr);
 
     puts("");
     puts("");
 
 
-	//Part 5 Refer to Elements in an Array: Pointer Offset and Subscript Notation
-	puts("\nPart 5: refer to array elements\n");
+	// ---------- PART FIVE: Refer to Elements in an Array: Pointer Offset and
+    //                       Subscript Notation
+	puts("****************************************");
+	puts("Part 5: refer to array elements\n");
 
 	puts("array printed with:\nArray index notation");
 	for (size_t i = 0; i < SIZE; ++i)
