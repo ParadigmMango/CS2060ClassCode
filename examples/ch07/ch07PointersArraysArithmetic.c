@@ -1,6 +1,6 @@
 //!  Chapter 7: Pointers, Arrays and Arithmetic Explorations
 /*!
-  \file ch07PoinersArraysArithmetic.c
+  \file ch07PointersArraysArithmetic.c
   \author Jacob Hartt (jacobjhartt@gmail.com)
   \version 1.0
   \date 02-27-2023
