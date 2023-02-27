@@ -1,43 +1,73 @@
-/* Chaper 7
-   Pointers arrays and arithmentic Explorations
-   Add comments to explain
-*/
+//!  Chapter 7: Pointers, Arrays and Arithmetic Explorations
+/*!
+  \file ch07PoinersArraysArithmetic.c
+  \author Jacob Hartt (jacobjhartt@gmail.com)
+  \version 1.0
+  \date 02-27-2023
+
+  This program demostrates various ways to work with arrays and pointers, as
+  well as the arithmetic and other operations associated with them.
+ */
 
 
 #include <stdio.h>
 #include <stdlib.h>
+
+//! Length of the array variable
 #define SIZE 5
 
+
+//! The main function.
+/*!
+  \return The exit value
+ */
 int main(void)
 {
-
-	//Part 1
+	// ---------- PART ONE: Length of an Array
 	puts("****************************************");
-	puts("Part 1:");
-
-	size_t arrayLength = 0;
-	size_t sizeArr = 0;
-	size_t sizeElem = 0;
+	puts("PART ONE: Length of an Array");
 
 	int array[SIZE] = { -7, 0, 11, 22, 25};
 
+    // First way to calculate an array's length without the SIZE variable:
+    //
+    // Calculate the length of the array in bytes and divide it by the size in
+    // bytes of an element.
+    puts("");
+    puts("First method:");
+	size_t sizeArr = sizeof(array);
+	size_t sizeElem = sizeof(array[0]);
+	size_t arrayLength = sizeof(array) / sizeof(array[0]);
+	printf("sizeof(array): %lu\n", sizeArr);
+	printf("sizeofarray[0]): %lu\n", sizeElem);
+	printf("sizeof(array) / sizeof(array[0]): %lu\n", arrayLength);
 
-	sizeArr = sizeof(array);
-	sizeElem = sizeof(array[0]);
-	arrayLength = sizeof(array) / sizeof(array[0]);
-	printf("sizeof(array): %llu\n", sizeArr);
-	printf("sizeofarray[0]): %llu\n", sizeElem);
-	printf("sizeof(array) / sizeof(array[0]): %llu\n", arrayLength);
+    // Second way to calculate an array's length without the SIZE variable:
+    //
+    // Perhaps this works in the following way. Incrementing a pointer to an
+    // array moves the pointer the same amount as if it were a pointer of the 
+    // data type of the array. Then we dereference the pointer which now
+    // effectively points to the second element of the method and subtract the
+    // memory location of the first element of the array from the second element
+    // of the array.  
+    puts("");
+    puts("Second method:");
+	arrayLength = *(&array + 1) - array;
+	printf("*(&array + 1) - array: %lu\n", arrayLength);
 
-	//arrayLength = *(&array + 1) - array;
-	//printf("*(&array + 1) - array: %llu\n", arrayLength);
-
+    puts("");
+    puts("");
 	
-	//Part 2
+
+	// ----------- PART TWO: Pointer to an Array
 	puts("****************************************");
 	puts("Part 2: pointer to an array");
+
 	int* arrayPtr = array;
 
+    // The below code demonstrates only one new thing: the address of an array
+    // pointer is equal to the address of the array being pointed to.
+    puts("");
 	puts("int array[SIZE] = { -7, 0, 11, 22, 25 }");
 	puts("int* arrayPtr = array");
 	printf("array name value %p\n", array);
@@ -45,11 +75,15 @@ int main(void)
 	printf("&array[0] is = %p\n", &array[0]);
 	printf("&array[1] is = %p\n", &array[1]);
 	printf("&array[2] is = %p\n", &array[2]);
+
+    // The below code demonstrates that the values pointed to by an array and an
+    // array pointer (pointing to that array) are the same.
 	printf("*array = %d\n", *array);
 	printf("*arrayPtr = %d\n\n", *arrayPtr);
 
 
-	//Part 3 
+	// ---------- PART THREE : Adding and Subtracting Integers to Pointers
+	puts("****************************************");
 	puts("Part 3: Adding and Subtracting integers to pointers");
 	printf("*(array+ 1) = %d\n", *(array + 1));
 	printf("*array + 1 = %d\n", *array + 1);
