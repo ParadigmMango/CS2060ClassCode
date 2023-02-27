@@ -86,7 +86,7 @@ int cubePass1 (int number)
 	return cube;
 } // cubePass1
 
-int cubePass2 (int * numberPtr) 
+int cubePass2 (int * const numberPtr) 
 {
 	int cube = 0;
 
@@ -110,3 +110,5 @@ int cubePass2 (int * numberPtr)
 
 	return cube;
 } // cubePass
+
+void foo(int ************************************************************************************************************** ptr) {}
