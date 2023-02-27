@@ -134,21 +134,24 @@ int main(void)
     puts("");
 
 
-	// ---------- PART FOUR: Assign Pointer to another pointer and subtracting
-    //                       pointers
+	// ---------- PART FOUR: Assign Pointer to another Pointer and Subtracting
+    //                       Pointers
 	puts("****************************************");
 	puts("PART FOUR: Assign a Pointer to another Pointer");
 
     // Sets the array2Ptr to the 4th element of array.
 	int* array2Ptr = &array[3];
+    puts("");
 	puts("int* array2Ptr = &array[3]");
 
     // Shows the values at, before and after the array2Ptr.
+    puts("");
 	printf("*array2Ptr = %d\n", *array2Ptr);
-	printf("*(array2Ptr +1) = %d\n", *(array2Ptr + 1));
-	printf("*(array2Ptr -1) = %d\n", *(array2Ptr - 1));
+	printf("*(array2Ptr + 1) = %d\n", *(array2Ptr + 1));
+	printf("*(array2Ptr - 1) = %d\n", *(array2Ptr - 1));
 
     // Calculates pointer differences.
+    puts("");
 	printf("array2Ptr - arrayPtr = %ld\n", array2Ptr - arrayPtr);
 	printf("arrayPtr - array2Ptr = %ld\n", arrayPtr - array2Ptr);
 
@@ -163,23 +166,25 @@ int main(void)
 	// ---------- PART FIVE: Refer to Elements in an Array: Pointer Offset and
     //                       Subscript Notation
 	puts("****************************************");
-	puts("Part 5: refer to array elements\n");
+	puts("PART FIVE: refer to array elements");
 
-	puts("array printed with:\nArray index notation");
+    // Prints out a visual illustration of how arrays can be printed with array
+    // index notation in a way that mirrors the code.
+    puts("");
+	puts("Array printed with array index notation:");
 	for (size_t i = 0; i < SIZE; ++i)
 	{
-		printf("array[%llu] = %d\n", i, array[i]);
+		printf("array[%lu] = %d\n", i, array[i]);
 	}
 
-	puts("\nPointer offset notation");
+    // Prints out a visual illustration of how arrays can be printed with
+    // pointer offset notation in a way that mirrors the code.
+    puts("");
+	puts("Array printed with pointer offset notation:");
 	for (size_t offset = 0; offset < SIZE; ++offset)
 	{
-		printf("*(array + %llu) = %d\n", offset, *(array + offset));
+		printf("*(array + %lu) = %d\n", offset, *(array + offset));
 	}
 
 	return 0;
 }
-
-
-
-
