@@ -32,6 +32,9 @@
 
 //! An array containing all of the weights for the grade categories in order.
 const double GRADE_CATEGORY_WEIGHTS[] = {0.1, 0.3, 0.3, 0.15, 0.15};
+//! A string indicating the the number associated with each grade category.
+// const char *CATEGORIES[GRADE_CATEGORIES] = {"Learning Activity", "Homework",
+                                            // "Project", "Midterm", "Final"};
 
 
 //! Calculates the average value of an array.
