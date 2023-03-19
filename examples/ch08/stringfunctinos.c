@@ -26,29 +26,34 @@ void wordOccurs(void);
 
 int main(void)
 {
-	
-	//strcpyEx1();
-	//strcpyEx2();
-	//strncpyEx1();
-	//strncpyEx2();
-	//stringCompare();
+
+    const char *str = "ahhhhthhh";
+    char *str2;
+
+    scanf("%s", str2);
+
+	// strcpyEx1();
+	// strcpyEx2();
+	// strncpyEx1();
+	// strncpyEx2();
+	// stringCompare();
 
 	//notice how test data can be sent in a loop so do not need to enter
 	
-	const char* emailStr[4] = { "test@uccs.edu", "testuccs.edu", "test@uccsedu", "test.ucce@edu"};
-	for (size_t i = 0; i < 4; i++)
-	{  
-		printf("Email: %s\n", emailStr[i]);
-		strchrValidateEmail(emailStr[i]);
+	// const char* emailStr[4] = { "test@uccs.edu", "testuccs.edu", "test@uccsedu", "test.ucce@edu"};
+	// for (size_t i = 0; i < 4; i++)
+	// {  
+	// 	printf("Email: %s\n", emailStr[i]);
+	// 	strchrValidateEmail(emailStr[i]);
 	
-	}
+	// }
 	
 
-	//numSpace();
-	//letterAnalysis();
-	//wordSize();
-	//wordOccurs();
-    //memoryFunctions();
+	// numSpace();
+	// letterAnalysis();
+	wordSize();
+	// wordOccurs();
+    // memoryFunctions();
 
 }
 
