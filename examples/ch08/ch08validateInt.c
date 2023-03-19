@@ -27,11 +27,10 @@ int main(void)
 
 		inputLength = strnlen(inputStr, LENGTH);
 
-		if (inputLength > 0 && inputStr[inputLength - 1] == '\n')
-		{
+		if (inputLength > 0 && inputStr[inputLength - 1] == '\n') {
 			inputStr[inputLength - 1] = '\0';
-			inputLength--;
 		}
+
 		exploreValidateInt(inputStr);
 	}
 
