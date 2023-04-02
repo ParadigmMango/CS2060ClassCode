@@ -8,6 +8,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 
 
@@ -44,9 +45,17 @@ typedef struct donor {
     char zip[STRING_SIZE];
 } Donor;
 
+//## Misc. Functions
+void clearBuffer();
 
 //## Core string input toolchain
+/*! Get a line string from the user
+  \param line the string to write into
+  \param lineSize the size of the line string
+  \return whether or not the fgets succeeded
+ */
 bool getLine(char *line, size_t lineSize);
+
 bool getWord(char *word, size_t wordSize);
 void getValidatedWord(char *word, size_t wordSize, bool (*validate)(const char *,
                    size_t), const char *prompt, size_t promptSize, const char
@@ -87,6 +96,13 @@ void getDonation(double *donation, const char *prompt, size_t promptSize, const
 
 int main(void)
 {
+    char input[STRING_SIZE];
+
+    bool retVal = getLine(input, STRING_SIZE);
+
+    printf("%d\n", retVal);
+    puts(input);
+
     char str[TIME_STAMP_SIZE];
 
     time_t time_var = time(NULL);
@@ -95,3 +111,40 @@ int main(void)
 
     puts(str);
 } // main
+
+
+void clearBuffer()
+{
+    while (getchar() != '\n');
+}
+
+bool getLine(char *line, size_t lineSize)
+{
+    char *fgetsRetVal = fgets(line, lineSize, stdin);
+
+    // old newline sanitization method: difficult to clear buffer with and
+    // didn't trim newline chars that weren't at the end of line
+    // if (fgetsSuccess != NULL && line[lineSize - 1] == '\n') {
+    //     line[lineSize - 1] = '\0';
+    // }
+
+    // New newline sanitization method, clears buffer or trims newline using a 
+    // pointer to that newline
+    // Guard clauses are forbidden, so it is wrapped in an if statement
+    if (fgetsRetVal != NULL) {
+        char *newLinePtr = strchr(line, '\n');
+        if (newLinePtr != NULL) {
+            *newLinePtr = '\0';
+        } else {
+            clearBuffer();
+        }
+    }
+
+    return fgetsRetVal != NULL;
+} // getLine
+
+bool getWord(char *word, size_t wordSize);
+
+void getValidatedWord(char *word, size_t wordSize, bool (*validate)(const char *,
+                   size_t), const char *prompt, size_t promptSize, const char
+                   *error, size_t errorSize);
