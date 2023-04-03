@@ -7,8 +7,11 @@
  */
 
 #include <ctype.h>
+#include <errno.h>
+#include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
@@ -16,24 +19,34 @@
 //## General Constants
 #define STRING_SIZE 80
 #define TIME_STAMP_SIZE 19
+#define MIN_DONATION 0.0
+#define MIN_GOAL 0.0
 
 //## Prompt Messages
+#define DONATION_PROMPT "Enter your donation amount($): "
 #define EMAIL_PROMPT "Enter email address: "
-#define EMAIL_VALID_PROMPT "Is this email correct? (y)es or (n)o "
+#define EMAIL_VALID_PROMPT "Is this email correct? (y)es or (n)o: "
 #define FIRST_NAME_PROMPT "Enter first name: "
+#define GOAL_PROMPT "Enter the goal amount you want to raise: "
 #define LAST_NAME_PROMPT "Enter last name: "
 #define PASSWORD_PROMPT "Enter password: "
 #define URL_PROMPT "Enter URL for your fundraiser: "
 #define ZIP_PROMPT "Enter your zip code: "
 
 //## Error Messages
+#define DONATION_ERROR "That is not a valid donation amount, please enter another: "
 #define EMAIL_ERROR "That email is not valid, please enter another: "
 #define EMAIL_VALID_ERROR "Please enter (y)es or (n)o: "
 #define FIRST_NAME_ERROR "That first name is not valid, please enter another: "
+#define GOAL_ERROR "That goal amount is not valid, please enter another: "
 #define LAST_NAME_ERROR "That last name is not valid, please enter another: "
 #define PASSWORD_ERROR "That password is not valid, please enter another: "
 #define URL_ERROR "That URL is not valid, please enter another: "
 #define ZIP_ERROR "That zip code is not valid, please enter another: "
+
+//## Donation Constants
+#define ADMIN_MODE "q"
+#define ADMIN_NUM -1
 
 //## URL Constants
 #define LINK_BEGINNING "https:donate.com/"
@@ -209,18 +222,47 @@ bool getYesOrNo(const char *prompt, const char *error);
 void getZip(char *zip, size_t zipSize);
 
 //## Double input toolchain
-bool strToDouble(const char *str, double *num);
-void getDouble(double *num, const char *prompt, size_t promptSize, const char
-               *error, size_t errorSize);
+//! Converts a string to a positive double and returns the result
+/*!
+  \param str the original string
+  \param num the location of the double to write into
+  \param min the minimum acceptable number that is considered valid
+  \return Whether or not the conversion succeeded
+ */
+bool strToPosDouble(const char *str, double *num, double min);
+//! Gets a valid positive double input from the user.  Primarily for retrieving
+//! money.
+/*!
+  \param num the location of the double to write into
+  \param prompt the original user prompt
+  \param error the error and follow-up prompt
+  \param min the minimum acceptable number
+ */
+void getPosDouble(double *num, const char *prompt, const char *error, double min);
 
 //## Donation input toolchain
+//! Determines if a string is a donation amount.
+/*!
+  \param donation the string to validate
+  \param donationSize the size of the string to validate
+  \return Whether or not the string is a valid donation amount
+ */
 bool isDonation(const char *donation, size_t donationSize);
-void getDonation(double *donation, const char *prompt, const char *error);
+//! Gets a valid donation from the user.
+/*!
+  \param donation the address of the double to write the donation into
+ */
+void getDonation(double *donation);
 
 
 int main(void)
 {
-    char input[STRING_SIZE];
+    char input[STRING_SIZE] = "123d1.213444";
+    double heh;
+
+    getDonation(&heh);
+    
+    printf("%lf\n", heh);
 
     getZip(input, STRING_SIZE);
 
@@ -450,3 +492,86 @@ void getZip(char *zip, size_t zipSize)
 {
     getValidatedWord(zip, zipSize, &isZip, ZIP_PROMPT, ZIP_ERROR);
 } // getZip
+
+bool strToPosDouble(const char *str, double *num, double min)
+{
+    // vars for validation
+	char *end;
+	errno = 0;
+
+    bool isValid = false;
+
+	double doubleTest = strtod(str, &end);
+
+    // Test for a successful conversion
+	if (end != str && '\0' == *end && !(doubleTest == HUGE_VAL && ERANGE == errno)
+        && doubleTest > min) {
+        *num = doubleTest;
+
+        isValid = true;
+	}
+
+    return isValid;
+} // strToDouble
+
+void getPosDouble(double *num, const char *prompt, const char *error, double min)
+{
+    printf("%s", prompt);
+
+    // Set up input variables
+    char word[STRING_SIZE];
+    bool getWordSuccess = getWord(word, STRING_SIZE);
+    double doubleTest;
+
+    // Print errors until a valid word that also passes validate() is found
+    while (!getWordSuccess || !strToPosDouble(word, &doubleTest, min)) {
+        printf("%s", error);
+
+        getWordSuccess = getWord(word, STRING_SIZE);
+    }
+
+    *num = doubleTest;
+} // getDouble
+
+bool isDonation(const char *donation, size_t donationSize)
+{
+    bool isValid = false;
+
+    // determine if the string is a double that is above the minimum donation
+    double moneyNum;
+    bool isDonationDouble = strToPosDouble(donation, &moneyNum, MIN_DONATION);
+    
+    if (isDonationDouble) {
+        isValid = true;
+    } else {
+        // Test for ADMIN_MODE
+        char lowerDonation[STRING_SIZE];
+        toLower(donation, lowerDonation);
+
+        if (strcmp(lowerDonation, ADMIN_MODE) == 0) {
+            isValid = true;
+        }
+    }
+
+    return isValid;
+} // isDonation
+
+void getDonation(double *donation)
+{    
+    // get a valid donation string
+    char rawDonation[STRING_SIZE];
+    getValidatedWord(rawDonation, STRING_SIZE, &isDonation, DONATION_PROMPT,
+                     DONATION_ERROR);
+
+    // lowercase the string to test against ADMIN_MODE
+    char lowerDonation[STRING_SIZE];
+    toLower(rawDonation, lowerDonation);
+
+    if (strcmp(lowerDonation, ADMIN_MODE) == 0) {
+        // if string is ADMIN_MODE, return ADMIN_NUM to indicate an exit
+        *donation = ADMIN_NUM;
+    } else {
+        // set validnumbers
+        strToPosDouble(rawDonation, donation, MIN_DONATION);
+    }
+} // getDonation
