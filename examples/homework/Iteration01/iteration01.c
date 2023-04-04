@@ -19,6 +19,7 @@
 //## General Constants
 #define STRING_SIZE 80
 #define TIME_STAMP_SIZE 19
+#define MAX_CRED_PROMPTS 2
 #define MIN_DONATION 0.0
 #define MIN_GOAL 0.0
 #define TRANSACTION_FEE 0.029
@@ -40,11 +41,13 @@
 //## Error Messages
 #define DONATION_ERROR "That is not a valid donation amount, please enter another: "
 #define EMAIL_ERROR "That email is not valid, please enter another: "
+#define EMAIL_MATCH_ERROR "That email does not match, please enter another: "
 #define EMAIL_VALID_ERROR "Please enter (y)es or (n)o: "
 #define FIRST_NAME_ERROR "That first name is not valid, please enter another: "
 #define GOAL_ERROR "That goal amount is not valid, please enter another: "
 #define LAST_NAME_ERROR "That last name is not valid, please enter another: "
 #define PASSWORD_ERROR "That password is not valid, please enter another: "
+#define PASSWORD_MATCH_ERROR "That password does not match, please enter another: "
 #define RECEIPT_ERROR "Please enter (y)es or (n)o: "
 #define URL_ERROR "That URL is not valid, please enter another: "
 #define ZIP_ERROR "That zip code is not valid, please enter another: "
@@ -67,6 +70,7 @@ const char NO[STRING_SIZE] = "n";
 #define ZIP_SIZE 5
 
 //## Mode Constants
+#define MODE_FAIL -1
 #define MODE_SUCCESS 1
 #define MODE_SUCCESS_ADMIN 42
 
@@ -104,6 +108,15 @@ typedef struct donor {
 //## Misc. Functions
 //! Wrapper function which clears the input buffer
 void clearBuffer(void);
+//! Have the user match a credential
+/*!
+  \param cred the credential to match against
+  \param prompt the original prompt for the credential
+  \param badMatchError the error to display if the user entered credential doen't match
+  \return whether or not the user can match the credential in time
+ */
+bool matchCredential(const char *cred, const char *prompt, const char
+                     *badMatchError);
 //! A safer version of strncpy that null terminates all srcs
 /*!
   \param dest the destination string to write to
@@ -298,12 +311,10 @@ int main(void)
 {
     Organization testOrg;
     Donor dummyDonor;
-
+    
     setUp(&testOrg);
-    int lol = donate(&testOrg, &dummyDonor);
-    if (lol == ADMIN_NUM) {
-
-    }
+    donate(&testOrg, &dummyDonor);
+    report(&testOrg);
 
     return 0;
 } // main
@@ -313,6 +324,48 @@ void clearBuffer(void)
 {
     while (getchar() != '\n');
 } // clearBuffer
+
+bool matchCredential(const char *cred, const char *prompt, const char
+                     *badMatchError)
+{
+    // Grab the initial credential to test against
+    printf("%s", prompt);
+    char inputCred[STRING_SIZE];
+    getWord(inputCred, STRING_SIZE);
+
+    unsigned int numPrompts = 1;
+    bool isValid;
+
+    // special case here is that MAX_CRED_PROMPTS means no limit on cred prompts
+    if (MAX_CRED_PROMPTS == 0) {
+        // Print errors and grab creds until a valid one is obtained
+        while (strcmp(cred, inputCred) != 0) {
+            printf("%s", badMatchError);
+
+            getWord(inputCred, STRING_SIZE);
+
+            numPrompts++;
+        }
+
+        isValid = true;
+    }
+    // prompt an additional, limited number of times
+    else {
+        // print erros and grab inputs until a valid one is found or the user
+        // runs out of prompts
+        while (strcmp(cred, inputCred) != 0 && numPrompts < MAX_CRED_PROMPTS) {
+            printf("%s", badMatchError);
+
+            getWord(inputCred, STRING_SIZE);
+
+            numPrompts++;
+        }
+
+        isValid = strcmp(cred, inputCred) == 0;
+    }
+
+    return isValid;
+} // matchCredential
 
 void strNCpySafe(char *dest, const char *src, size_t count)
 {
@@ -707,4 +760,31 @@ int donate(Organization *org, Donor *donor)
     puts("");
 
     return exitValue;
-} // doante
+} // donate
+
+int report(const Organization *org)
+{
+    int exitValue;
+
+    // Determines if the email address is valid
+    if (matchCredential(org->ownerEmail, EMAIL_PROMPT, EMAIL_MATCH_ERROR)) {
+        // dermines if the password is valid
+        if (matchCredential(org->ownerPwd, PASSWORD_PROMPT,
+                PASSWORD_MATCH_ERROR)) {
+            // prints summary
+            puts("");
+            printf("~~~~~ %s ~~~~~\n", org->name);
+            printf("You collected %u donation(s) totaling $%.2lf after $%.2lf "
+                   "in fees.\n", org->numDonations, org->donationSum,
+                   org->feesSum);
+
+            exitValue = MODE_SUCCESS;
+        } else {
+            exitValue = MODE_FAIL;
+        }
+    } else {
+        exitValue = MODE_FAIL;
+    }
+
+    return exitValue;
+} // report
