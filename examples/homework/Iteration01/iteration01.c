@@ -703,6 +703,7 @@ int setUp(Organization *org)
     org->numDonations = 0;
     org->donationSum = 0.0;
     org->numDonors = 0;
+    org->feesSum = 0.0;
     
     // Print out thank you message. Not a constant in case more variables in the
     // message are desired.
