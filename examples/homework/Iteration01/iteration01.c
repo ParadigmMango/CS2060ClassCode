@@ -309,12 +309,32 @@ int report(const Organization *org);
 
 int main(void)
 {
-    Organization testOrg;
+    Organization org;
+
+    // Ignore this for now: it is an unused variable used to allow donations to 
+    // run when donors are not tracked for the moment.
     Donor dummyDonor;
     
-    setUp(&testOrg);
-    donate(&testOrg, &dummyDonor);
-    report(&testOrg);
+    // setup
+    setUp(&org);
+
+    // run a loop until the program ends
+    bool endProgram = false;
+    while (!endProgram) {
+        // track the output of donation modes to see if the report mode should 
+        // be entered
+        int donationSuccess = donate(&org, &dummyDonor);
+
+        if (donationSuccess == MODE_SUCCESS_ADMIN) {
+            // track the output of the report mode to see if the program should
+            // end
+            int reportSuccess = report(&org);
+
+            if (reportSuccess == MODE_SUCCESS) {
+                endProgram = true;
+            }
+        }
+    }
 
     return 0;
 } // main
@@ -707,7 +727,7 @@ int donate(Organization *org, Donor *donor)
         puts("We have reached our goal but can still use the donations.");
     } else {
         printf("We are %2.0lf%% towards our goal of $%.2lf.\n",
-               org->donationSum / org->goalAmount, org->goalAmount);
+               (org->donationSum / org->goalAmount) * 100, org->goalAmount);
     }
     puts("");
 
@@ -766,13 +786,14 @@ int report(const Organization *org)
 {
     int exitValue;
 
+    puts("");
+
     // Determines if the email address is valid
     if (matchCredential(org->ownerEmail, EMAIL_PROMPT, EMAIL_MATCH_ERROR)) {
         // dermines if the password is valid
         if (matchCredential(org->ownerPwd, PASSWORD_PROMPT,
                 PASSWORD_MATCH_ERROR)) {
             // prints summary
-            puts("");
             printf("~~~~~ %s ~~~~~\n", org->name);
             printf("You collected %u donation(s) totaling $%.2lf after $%.2lf "
                    "in fees.\n", org->numDonations, org->donationSum,
