@@ -21,6 +21,7 @@
 #define TIME_STAMP_SIZE 19
 #define MIN_DONATION 0.0
 #define MIN_GOAL 0.0
+#define TRANSACTION_FEE 0.029
 
 //## Prompt Messages
 #define DONATION_PROMPT "Enter your donation amount($): "
@@ -29,7 +30,10 @@
 #define FIRST_NAME_PROMPT "Enter first name: "
 #define GOAL_PROMPT "Enter the goal amount you want to raise: "
 #define LAST_NAME_PROMPT "Enter last name: "
+#define ORG_NAME_PROMPT "Enter your organization's name: "
+#define ORG_PURPOSE_PROMPT "State the purpose of your fundraiser: "
 #define PASSWORD_PROMPT "Enter password: "
+#define RECEIPT_PROMPT "Do you want a receipt, (y)es or (n)o? "
 #define URL_PROMPT "Enter URL for your fundraiser: "
 #define ZIP_PROMPT "Enter your zip code: "
 
@@ -41,6 +45,7 @@
 #define GOAL_ERROR "That goal amount is not valid, please enter another: "
 #define LAST_NAME_ERROR "That last name is not valid, please enter another: "
 #define PASSWORD_ERROR "That password is not valid, please enter another: "
+#define RECEIPT_ERROR "Please enter (y)es or (n)o: "
 #define URL_ERROR "That URL is not valid, please enter another: "
 #define ZIP_ERROR "That zip code is not valid, please enter another: "
 
@@ -61,6 +66,10 @@ const char NO[STRING_SIZE] = "n";
 //## Zip Constants
 #define ZIP_SIZE 5
 
+//## Mode Constants
+#define MODE_SUCCESS 1
+#define MODE_SUCCESS_ADMIN 42
+
 
 //! An organization struct which packages all relevant information to itself.
 typedef struct organization {
@@ -79,6 +88,7 @@ typedef struct organization {
     // donation tracking
     unsigned int numDonations;
     double donationSum;
+    double feesSum;
 
     // donor tracking
     unsigned int numDonors;
@@ -87,7 +97,7 @@ typedef struct organization {
 //! An donor struct which packages all relevant information to itself.
 typedef struct donor {
     char firstName[STRING_SIZE];
-    char fastName[STRING_SIZE];
+    char lastName[STRING_SIZE];
     char zip[STRING_SIZE];
 } Donor;
 
@@ -118,6 +128,14 @@ void toLower(const char *rawStr, char *lowerStr);
   \return whether or not a string was successfully retrieved
  */
 bool getLine(char *line, size_t lineSize);
+//! Get a line string from the user with a prompt
+/*!
+  \param word the line string to write into
+  \param wordSize the size of the line string
+  \param prompt the prompt to give the user
+  \return whether or not a string was successfully retrieved
+ */
+bool getLineWithPrompt(char *line, size_t lineSize, const char *prompt);
 //! Get a word string from the user
 /*!
   \param word the word string to write into
@@ -254,27 +272,40 @@ bool isDonation(const char *donation, size_t donationSize);
  */
 void getDonation(double *donation);
 
+//## Modes
+//! Sets up an org struct with user input.
+/*!
+  \param org the pointer to the organization to initialize
+  \return whether the mode was successful
+ */
+int setUp(Organization *org);
+//! Have a user donate to the organization.
+/*!
+  \param org the pointer to the organization to donate to
+  \param donor the pointer to a donor struct to track donors
+  \return whether the mode was successful or if to go to admin mode
+ */
+int donate(Organization *org, Donor *donor);
+//! Enter the reports mode which prints out organization details and ends the program
+/*!
+  \param org the organization to print details about
+  \return whether the mode was succeeded or to go back to donations mod
+ */
+int report(const Organization *org);
+
 
 int main(void)
 {
-    char input[STRING_SIZE] = "123d1.213444";
-    double heh;
+    Organization testOrg;
+    Donor dummyDonor;
 
-    getDonation(&heh);
-    
-    printf("%lf\n", heh);
+    setUp(&testOrg);
+    int lol = donate(&testOrg, &dummyDonor);
+    if (lol == ADMIN_NUM) {
 
-    getZip(input, STRING_SIZE);
+    }
 
-    puts(input);
-
-    char str[TIME_STAMP_SIZE];
-
-    time_t time_var = time(NULL);
-
-    strftime(str, sizeof(str), "%D - %I:%M%p", localtime(&time_var));
-
-    puts(str);
+    return 0;
 } // main
 
 
@@ -328,6 +359,13 @@ bool getLine(char *line, size_t lineSize)
 
     return fgetsRetVal != NULL;
 } // getLine
+
+bool getLineWithPrompt(char *line, size_t lineSize, const char *prompt)
+{
+    printf("%s", prompt);
+
+    return getLine(line, lineSize);
+} // getLineWithPrompt
 
 bool getWord(char *word, size_t wordSize)
 {
@@ -575,3 +613,98 @@ void getDonation(double *donation)
         strToPosDouble(rawDonation, donation, MIN_DONATION);
     }
 } // getDonation
+
+int setUp(Organization *org)
+{
+    // Grab user inputs
+    getLineWithPrompt(org->name, STRING_SIZE, ORG_NAME_PROMPT);
+    getLineWithPrompt(org->purpose, STRING_SIZE, ORG_PURPOSE_PROMPT);
+    getName(org->ownerFirstName, STRING_SIZE, FIRST_NAME_PROMPT, FIRST_NAME_ERROR);
+    getName(org->ownerLastName, STRING_SIZE, LAST_NAME_PROMPT, LAST_NAME_ERROR);
+    getPosDouble(&org->goalAmount, GOAL_PROMPT, GOAL_ERROR, MIN_GOAL);
+    getEmail(org->ownerEmail, STRING_SIZE);
+    getPassword(org->ownerPwd, STRING_SIZE);
+    getURL(org->url, STRING_SIZE);
+
+    // Initialize count and sum variables
+    org->numDonations = 0;
+    org->donationSum = 0.0;
+    org->numDonors = 0;
+    
+    // Print out thank you message. Not a constant in case more variables in the
+    // message are desired.
+    printf("Thank you %s %s. The url to raise funds for %s is %s.\n\n",
+           org->ownerFirstName, org->ownerLastName, org->name, org->url);
+
+    return MODE_SUCCESS;
+} // setUp
+
+int donate(Organization *org, Donor *donor)
+{
+    int exitValue;
+
+    // Print out org info. Not constants in case more variables in the
+    // printf statements are desired.
+    puts(org->url);
+    puts("MAKE A DIFFERENCE BY YOUR DONATION");
+    printf("Organization: %s\n", org->name);
+    printf("Purpose: %s\n", org->purpose);
+    printf("We currently have raised $%.2lf.\n", org->donationSum);
+    if (org->donationSum >= org->goalAmount) {
+        puts("We have reached our goal but can still use the donations.");
+    } else {
+        printf("We are %2.0lf%% towards our goal of $%.2lf.\n",
+               org->donationSum / org->goalAmount, org->goalAmount);
+    }
+    puts("");
+
+    // Retrieve the user's donation
+    double donation = 0;
+    getDonation(&donation);
+
+    // exit to reports mode
+    if (donation == ADMIN_NUM) {
+        exitValue = MODE_SUCCESS_ADMIN;
+    }
+    // add donation
+    else {
+        // get donor info
+        getName(donor->firstName, STRING_SIZE, FIRST_NAME_PROMPT, FIRST_NAME_ERROR);
+        getName(donor->lastName, STRING_SIZE, LAST_NAME_PROMPT, LAST_NAME_ERROR);
+        getZip(donor->zip, STRING_SIZE);
+
+        // track donations and fees
+        double fee = donation * TRANSACTION_FEE;
+        org->feesSum += fee;
+        
+        donation -= fee;
+        org->donationSum += donation;
+
+        org->numDonations++;
+
+        // print donation thank you
+        printf("Thank you for your donation. There is a %.1lf%% credit card" 
+               "processing fee of %.2lf. %.2lf will be donated.\n",
+                100 * TRANSACTION_FEE, fee, donation);
+        
+        if (getYesOrNo(RECEIPT_PROMPT, RECEIPT_ERROR)) {
+            // create formatted timestamp
+            char timeStamp[TIME_STAMP_SIZE];
+            time_t time_var = time(NULL);
+            strftime(timeStamp, sizeof(timeStamp), "%D - %I:%M%p",
+                     localtime(&time_var));
+
+            // print the actual receipt
+            puts("");
+            printf("Organization: %s\n", org->name);
+            printf("Donation Amount: $%.2lf\n", fee + donation);
+            printf("Donation Date: %s\n", timeStamp);
+        }
+
+        exitValue = MODE_SUCCESS;
+    }
+
+    puts("");
+
+    return exitValue;
+} // doante
