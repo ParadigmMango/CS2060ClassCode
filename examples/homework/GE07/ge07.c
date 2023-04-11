@@ -7,8 +7,11 @@
  */
 
 #include <ctype.h>
+#include <errno.h>
+#include <limits.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 
@@ -95,8 +98,22 @@ bool isYesOrNo(const char *yesNo, size_t yesNoSize);
 bool getYesOrNo(const char *prompt, const char *error);
 
 
+//## Integer input toolchain
+//! Converts a string to an int and returns if it succeeded.
+/*!
+  \param str the original string
+  \param num the location of the integer to write into
+  \return Whether or not the conversion succeeded
+ */
+bool strToInt(const char *str, int *num);
+
+
 int main(void)
 {
+    int lel;
+
+    strToInt("-12333", lel);
+
     return 0;
 } // main
 
@@ -153,6 +170,37 @@ bool getLine(char *line, size_t lineSize)
     return fgetsRetVal != NULL;
 } // getLine
 
+bool getWord(char *word, size_t wordSize)
+{
+    bool getLineSuccess = getLine(word, wordSize);
+
+    // if getLine succeded, trim the string at the first space if it exists
+    if (getLineSuccess) {
+        char *spacePtr = strchr(word, ' ');
+        
+        if (spacePtr != NULL) {
+            *spacePtr = '\0';
+        }
+    }
+
+    return getLineSuccess;
+} // getWord
+
+void getValidatedWord(char *word, size_t wordSize, bool (*validate)(const char
+                      *, size_t), const char *prompt, const char *error)
+{
+    printf("%s", prompt);
+
+    bool getWordSuccess = getWord(word, wordSize);
+
+    // Print errors until a valid word that also passes validate() is found
+    while (!getWordSuccess || !(*validate)(word, wordSize)) {
+        printf("%s", error);
+
+        getWordSuccess = getWord(word, wordSize);
+    }
+} // getValidatedWord
+
 bool isYesNo(const char *yesNo, size_t yesNoSize)
 {
     // lowercase the input string
@@ -179,4 +227,31 @@ bool getYesOrNo(const char *prompt, const char *error)
     // compare the lowercase string to the yes string
     return strcmp(YES, lowerRawStr) == 0;
 } // getYesOrNo
+
+bool strToInt(const char* str, int *num)
+{
+	char* end;
+	errno = 0;
+
+	long intTest = strtol(str, &end, 10);
+    bool isValid;
+
+	if (end == str) {
+		isValid = false;
+	} else if ('\0' != *end) {
+		isValid = false;
+	} else if ((LONG_MIN == intTest || LONG_MAX == intTest) && ERANGE == errno) {
+		isValid = false;
+	} else if (intTest > INT_MAX) {
+		isValid = false;
+	} else if (intTest < INT_MIN) {
+		isValid = false;
+	} else {
+		*num = (int)intTest;
+
+        isValid = true;
+	}
+
+    return isValid;
+}
 
