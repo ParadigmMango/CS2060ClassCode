@@ -15,10 +15,17 @@
 #include <string.h>
 
 
+#define MIN_AGE 1
 #define STRING_SIZE 80
 
 const char YES[STRING_SIZE] = "y";
 const char NO[STRING_SIZE] = "n";
+
+//## Prompt messages
+#define AGE_PROMPT "Enter age: "
+
+//## Error messages
+#define AGE_ERROR "Please enter a valid age: "
 
 
 typedef struct pet {
@@ -107,12 +114,48 @@ bool getYesOrNo(const char *prompt, const char *error);
  */
 bool strToInt(const char *str, int *num);
 
+//! Gets a valid integer input from the user.
+/*!
+  \param num the location of the integer to write into
+  \param prompt the original user prompt
+  \param error the error and follow-up prompt
+  \param min the minimum acceptable number
+ */
+void getInt(int *num, const char *prompt, const char *error, int min);
+
+
+//## Name functions
+//! Determine if a string is a name
+/*!
+  \param email the string to be validated
+  \param emailSize the size of the string to be validated
+  \return whether or not the string is a name
+ */
+bool isName(const char *name, size_t nameSize);
+
+//! Gets a valid name from the user
+/*!
+  \param name the string to write the name into
+  \param nameSize the size of the name string
+  \param prompt the intial user prompt
+  \param error the error prompt which agains asks the user for input
+ */
+void getName(char *name, size_t nameSize, const char *prompt, const char *error);
+
+
+//## Age function
+//! Gets an age number from the user and puts it into age
+/*!
+  \param age the location of the age integer to write into
+ */
+void getAge(int *age);
+
 
 int main(void)
 {
     int lel;
 
-    strToInt("-12333", lel);
+    getAge(&lel);
 
     return 0;
 } // main
@@ -247,7 +290,7 @@ bool strToInt(const char* str, int *num)
 	} else if (intTest < INT_MIN) {
 		isValid = false;
 	} else {
-		*num = (int)intTest;
+		*num = (int) intTest;
 
         isValid = true;
 	}
@@ -255,3 +298,36 @@ bool strToInt(const char* str, int *num)
     return isValid;
 }
 
+void getInt(int *num, const char *prompt, const char *error, int min)
+{
+    printf("%s", prompt);
+
+    // Set up input variables
+    char word[STRING_SIZE];
+    bool getWordSuccess = getWord(word, STRING_SIZE);
+    int intTest;
+
+    // Print errors until a valid word that also passes validate() is found
+    while (!getWordSuccess || !strToInt(word, &intTest) || intTest < min) {
+        printf("%s", error);
+
+        getWordSuccess = getWord(word, STRING_SIZE);
+    }
+
+    *num = intTest;
+} // getDouble
+
+bool isName(const char *name, size_t nameSize)
+{
+    return true;
+} // isName
+
+void getName(char *name, size_t nameSize, const char *prompt, const char *error)
+{
+    getValidatedWord(name, nameSize, &isName, prompt, error);
+} // getName
+
+void getAge(int *age)
+{
+    getInt(age, AGE_PROMPT, AGE_ERROR, MIN_AGE);
+} // getAge
