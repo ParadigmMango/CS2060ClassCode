@@ -46,11 +46,13 @@ const char NO[STRING_SIZE] = "n";
 #define NODE_DEL_ERROR_EMPTY "There aren't any nodes in the list!"
 
 
+//! A struct that bundles the name and age of a pet together.
 typedef struct pet {
     char name[STRING_SIZE];
     int age;
 } Pet;
 
+//! A node for a pet linked list.
 typedef struct petNode {
     Pet pet;
     struct petNode *nextNodePtr;
