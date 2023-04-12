@@ -21,11 +21,15 @@
 const char YES[STRING_SIZE] = "y";
 const char NO[STRING_SIZE] = "n";
 
+#define LINKED_LIST_EMPTY "There aren't any names in the list."
+#define LINKED_LIST_HEADER "The names in alphabetical order:"
+
 //## Prompt messages
 #define AGE_PROMPT "Enter age: "
 
 //## Error messages
 #define AGE_ERROR "Please enter a valid age: "
+#define MEM_ERROR "Not enough memory for new nodes."
 
 
 typedef struct pet {
@@ -38,9 +42,18 @@ typedef struct petNode {
     struct petNode *nextNodePtr;
 } PetNode;
 
+
 //## Misc. functions
 //! Wrapper function which clears the input buffer
 void clearBuffer(void);
+
+//! Compares two strings in a caseless manner.
+/*!
+  \param str1 the string to compare against
+  \param str2 the string to compare with
+  \return the return value of strcmp
+ */
+int strCmpCaseless(const char *str1, const char *str2);
 
 //! A safer version of strncpy that null terminates all srcs
 /*!
@@ -58,6 +71,7 @@ void strNCpySafe(char *dest, const char *src, size_t count);
   \param lowerStr the string to write the lowercase version of rawStr into
  */
 void toLower(const char *rawStr, char *lowerStr);
+
 
 //## Core string input toolchain
 //! Get a line string from the user
@@ -86,6 +100,7 @@ bool getWord(char *word, size_t wordSize);
  */
 void getValidatedWord(char *word, size_t wordSize, bool (*validate)(const char
                       *, size_t), const char *prompt, const char *error);
+
 
 //## YesNo Functions
 //! Determine if a string is a yes or no
@@ -151,11 +166,50 @@ void getName(char *name, size_t nameSize, const char *prompt, const char *error)
 void getAge(int *age);
 
 
+//## Node Functions 
+//! Inserts a pet into a linked list in alphabetical order of name.
+/*!
+  \param headPtr the location of the head of the linked list
+  \param pet the pet to insert to the list
+ */
+void insertPet(PetNode **headPtr, Pet pet);
+
+//! Print the contents of a pet linked list.
+/*!
+  \param headPtr the location of the head of the linked list
+ */
+void printContents(PetNode **headPtr);
+
+
 int main(void)
 {
-    int lel;
+    // int lel;
 
-    getAge(&lel);
+    // getAge(&lel);
+    
+    PetNode *head;
+    
+    Pet pet_1 = {"Amy", 3};
+    Pet pet_2 = {"Charlie", 2};
+    Pet pet_3 = {"Shirly", 1};
+
+    PetNode node_1 = {pet_1, NULL};
+    PetNode node_2 = {pet_2, NULL};
+    PetNode node_3 = {pet_3, NULL};
+
+    head = &node_1;
+    node_1.nextNodePtr = &node_2;
+    node_2.nextNodePtr = &node_3;
+    
+    PetNode *head2 = NULL;
+
+    insertPet(&head2, pet_2);
+    insertPet(&head2, pet_1);
+    insertPet(&head2, pet_3);
+
+    printContents(&head2);
+
+    int zez = strCmpCaseless("abcdE", "ABcde");
 
     return 0;
 } // main
@@ -165,6 +219,17 @@ void clearBuffer(void)
 {
     while (getchar() != '\n');
 } // clearBuffer
+
+int strCmpCaseless(const char *str1, const char *str2)
+{
+    char str1Lower[STRING_SIZE];
+    toLower(str1, str1Lower);
+
+    char str2Lower[STRING_SIZE];
+    toLower(str2, str2Lower);
+
+    return strcmp(str1Lower, str2Lower);
+} // strCmpCaseless
 
 void strNCpySafe(char *dest, const char *src, size_t count)
 {
@@ -185,7 +250,6 @@ void toLower(const char *rawStr, char *lowerStr)
         currCharPtr++;
     }
 } // toLower
-
 
 bool getLine(char *line, size_t lineSize)
 {
@@ -331,3 +395,58 @@ void getAge(int *age)
 {
     getInt(age, AGE_PROMPT, AGE_ERROR, MIN_AGE);
 } // getAge
+
+void deletePet(PetNode **headPtr, const char *name)
+{
+    free(*headPtr);
+} // delete pet
+
+void insertPet(PetNode **headPtr, Pet pet)
+{
+    PetNode *newNodePtr = malloc(sizeof(PetNode));
+
+    if (newNodePtr == NULL) {
+        puts(MEM_ERROR);
+    } else {
+        newNodePtr->nextNodePtr = NULL;
+        newNodePtr->pet = pet;
+
+        PetNode *prevNodePtr = NULL;
+        PetNode *currNodePtr = *headPtr;
+
+        while (currNodePtr != NULL &&
+               strCmpCaseless(pet.name, currNodePtr->pet.name) > 0) {
+            prevNodePtr = currNodePtr;
+            currNodePtr = currNodePtr->nextNodePtr;
+        }
+
+        if (prevNodePtr == NULL) {
+            *headPtr = newNodePtr;
+        } else {
+            prevNodePtr->nextNodePtr = newNodePtr;
+        }
+
+        newNodePtr->nextNodePtr = currNodePtr;
+    }
+} // insertPet
+
+void printContents(PetNode **headPtr)
+{
+    if (*headPtr == NULL) {
+        puts(LINKED_LIST_EMPTY);
+    } else {
+        PetNode *currNode = *headPtr;
+
+        puts(LINKED_LIST_HEADER);
+
+        while (currNode != NULL) {
+            Pet currPet = currNode->pet;
+
+            printf("%s is %d years old.\n", currPet.name, currPet.age);
+
+            currNode = currNode->nextNodePtr;
+        }
+    }
+
+    puts("");
+} // printContents

@@ -39,15 +39,16 @@
 #define ZIP_PROMPT "Enter your zip code: "
 
 //## Error Messages
-#define DONATION_ERROR "That is not a valid donation amount, please enter another: "
+#define DONATION_ERROR "That is not a valid donation amount, enter another: "
 #define EMAIL_ERROR "That email is not valid, please enter another: "
 #define EMAIL_MATCH_ERROR "That email does not match, please enter another: "
 #define EMAIL_VALID_ERROR "Please enter (y)es or (n)o: "
 #define FIRST_NAME_ERROR "That first name is not valid, please enter another: "
 #define GOAL_ERROR "That goal amount is not valid, please enter another: "
 #define LAST_NAME_ERROR "That last name is not valid, please enter another: "
+#define MODE_ERROR "A mode error has occurred."
 #define PASSWORD_ERROR "That password is not valid, please enter another: "
-#define PASSWORD_MATCH_ERROR "That password does not match, please enter another: "
+#define PASSWORD_MATCH_ERROR "That password does not match, enter another: "
 #define RECEIPT_ERROR "Please enter (y)es or (n)o: "
 #define URL_ERROR "That URL is not valid, please enter another: "
 #define ZIP_ERROR "That zip code is not valid, please enter another: "
@@ -70,10 +71,19 @@ const char NO[STRING_SIZE] = "n";
 #define ZIP_SIZE 5
 
 //## Mode Constants
-#define MODE_FAIL -1
-#define MODE_SUCCESS 1
 #define MODE_SUCCESS_ADMIN 42
+#define SETUP_MODE_FLAG 0
+#define DONATIONS_MODE_FLAG 1
+#define REPORT_MODE_FLAG 2
+#define END_PROGRAM_FLAG -1
 
+
+//! An donor struct which packages all relevant information to itself.
+typedef struct donor {
+    char firstName[STRING_SIZE];
+    char lastName[STRING_SIZE];
+    char zip[STRING_SIZE];
+} Donor;
 
 //! An organization struct which packages all relevant information to itself.
 typedef struct organization {
@@ -98,12 +108,12 @@ typedef struct organization {
     unsigned int numDonors;
 } Organization; 
 
-//! An donor struct which packages all relevant information to itself.
-typedef struct donor {
-    char firstName[STRING_SIZE];
-    char lastName[STRING_SIZE];
-    char zip[STRING_SIZE];
-} Donor;
+//## Mode Constants
+#define SETUP_MODE_FLAG 0
+#define DONATIONS_MODE_FLAG 1
+#define REPORT_MODE_FLAG 2
+#define END_PROGRAM_FLAG -1
+
 
 //## Misc. Functions
 //! Wrapper function which clears the input buffer
@@ -112,7 +122,8 @@ void clearBuffer(void);
 /*!
   \param cred the credential to match against
   \param prompt the original prompt for the credential
-  \param badMatchError the error to display if the user entered credential doen't match
+  \param badMatchError the error to display if the user entered credential
+                       doen't match
   \return whether or not the user can match the credential in time
  */
 bool matchCredential(const char *cred, const char *prompt, const char
@@ -225,7 +236,8 @@ void getEmail(char *email, size_t emailSize);
   \param prompt the intial user prompt
   \param error the error prompt which agains asks the user for input
  */
-void getName(char *name, size_t nameSize, const char *prompt, const char *error);
+void getName(char *name, size_t nameSize, const char *prompt, const char
+             *error);
 //! Gets a valid password from the user
 /*!
   \param password the string to write the password into
@@ -269,7 +281,8 @@ bool strToPosDouble(const char *str, double *num, double min);
   \param error the error and follow-up prompt
   \param min the minimum acceptable number
  */
-void getPosDouble(double *num, const char *prompt, const char *error, double min);
+void getPosDouble(double *num, const char *prompt, const char *error,
+                  double min);
 
 //## Donation input toolchain
 //! Determines if a string is a donation amount.
@@ -299,7 +312,8 @@ int setUp(Organization *org);
   \return whether the mode was successful or if to go to admin mode
  */
 int donate(Organization *org, Donor *donor);
-//! Enter the reports mode which prints out organization details and ends the program
+//! Enter the reports mode which prints out organization details and ends the
+//! program.
 /*!
   \param org the organization to print details about
   \return whether the mode was succeeded or to go back to donations mod
@@ -314,27 +328,52 @@ int main(void)
     // Ignore this for now: it is an unused variable used to allow donations to 
     // run when donors are not tracked for the moment.
     Donor dummyDonor;
+
+    // new main loop
+    int currFlag = SETUP_MODE_FLAG;
     
-    // setup
-    setUp(&org);
+    // iterate at least one until the program ends
+    do {
+        // find run each mode and go to the mode which its return value
+        // indicates with a flag
+        switch (currFlag) {
+          case SETUP_MODE_FLAG:
+            currFlag = setUp(&org);
+            break;
+        
+          case DONATIONS_MODE_FLAG:
+            currFlag = donate(&org, &dummyDonor);
+            break;
 
-    // run a loop until the program ends
-    bool endProgram = false;
-    while (!endProgram) {
-        // track the output of donation modes to see if the report mode should 
-        // be entered
-        int donationSuccess = donate(&org, &dummyDonor);
+          case REPORT_MODE_FLAG:
+            currFlag = report(&org);
+            break;
+        
+          default:
+            currFlag = END_PROGRAM_FLAG;
+            puts(MODE_ERROR);
+            break;
+        } // flag switch
+    } while (currFlag != END_PROGRAM_FLAG);
 
-        if (donationSuccess == MODE_SUCCESS_ADMIN) {
-            // track the output of the report mode to see if the program should
-            // end
-            int reportSuccess = report(&org);
+    // old main loop
+    // // run a loop until the program ends
+    // bool endProgram = false;
+    // while (!endProgram) {
+    //     // track the output of donation modes to see if the report mode
+    //     // should be entered
+    //     int donationSuccess = donate(&org, &dummyDonor);
 
-            if (reportSuccess == MODE_SUCCESS) {
-                endProgram = true;
-            }
-        }
-    }
+    //     if (donationSuccess == MODE_SUCCESS_ADMIN) {
+    //         // track the output of the report mode to see if the program 
+    //         // should end
+    //         int reportSuccess = report(&org);
+
+    //         if (reportSuccess == MODE_SUCCESS) {
+    //             endProgram = true;
+    //         }
+    //     }
+    // }
 
     return 0;
 } // main
@@ -615,8 +654,8 @@ bool strToPosDouble(const char *str, double *num, double min)
 	double doubleTest = strtod(str, &end);
 
     // Test for a successful conversion
-	if (end != str && '\0' == *end && !(doubleTest == HUGE_VAL && ERANGE == errno)
-        && doubleTest > min) {
+	if (end != str && '\0' == *end && !(doubleTest == HUGE_VAL &&
+            ERANGE == errno) && doubleTest > min) {
         *num = doubleTest;
 
         isValid = true;
@@ -625,7 +664,8 @@ bool strToPosDouble(const char *str, double *num, double min)
     return isValid;
 } // strToDouble
 
-void getPosDouble(double *num, const char *prompt, const char *error, double min)
+void getPosDouble(double *num, const char *prompt, const char *error,
+                  double min)
 {
     printf("%s", prompt);
 
@@ -692,7 +732,8 @@ int setUp(Organization *org)
     // Grab user inputs
     getLineWithPrompt(org->name, STRING_SIZE, ORG_NAME_PROMPT);
     getLineWithPrompt(org->purpose, STRING_SIZE, ORG_PURPOSE_PROMPT);
-    getName(org->ownerFirstName, STRING_SIZE, FIRST_NAME_PROMPT, FIRST_NAME_ERROR);
+    getName(org->ownerFirstName, STRING_SIZE, FIRST_NAME_PROMPT,
+            FIRST_NAME_ERROR);
     getName(org->ownerLastName, STRING_SIZE, LAST_NAME_PROMPT, LAST_NAME_ERROR);
     getPosDouble(&org->goalAmount, GOAL_PROMPT, GOAL_ERROR, MIN_GOAL);
     getEmail(org->ownerEmail, STRING_SIZE);
@@ -710,7 +751,7 @@ int setUp(Organization *org)
     printf("Thank you %s %s. The url to raise funds for %s is %s.\n\n",
            org->ownerFirstName, org->ownerLastName, org->name, org->url);
 
-    return MODE_SUCCESS;
+    return DONATIONS_MODE_FLAG;
 } // setUp
 
 int donate(Organization *org, Donor *donor)
@@ -738,13 +779,15 @@ int donate(Organization *org, Donor *donor)
 
     // exit to reports mode
     if (donation == ADMIN_NUM) {
-        exitValue = MODE_SUCCESS_ADMIN;
+        exitValue = REPORT_MODE_FLAG;
     }
     // add donation
     else {
         // get donor info
-        getName(donor->firstName, STRING_SIZE, FIRST_NAME_PROMPT, FIRST_NAME_ERROR);
-        getName(donor->lastName, STRING_SIZE, LAST_NAME_PROMPT, LAST_NAME_ERROR);
+        getName(donor->firstName, STRING_SIZE, FIRST_NAME_PROMPT,
+                FIRST_NAME_ERROR);
+        getName(donor->lastName, STRING_SIZE, LAST_NAME_PROMPT,
+                LAST_NAME_ERROR);
         getZip(donor->zip, STRING_SIZE);
 
         // track donations and fees
@@ -775,7 +818,7 @@ int donate(Organization *org, Donor *donor)
             printf("Donation Date: %s\n", timeStamp);
         }
 
-        exitValue = MODE_SUCCESS;
+        exitValue = DONATIONS_MODE_FLAG;
     }
 
     puts("");
@@ -785,7 +828,7 @@ int donate(Organization *org, Donor *donor)
 
 int report(const Organization *org)
 {
-    int exitValue;
+    int exitFlag;
 
     puts("");
 
@@ -795,18 +838,19 @@ int report(const Organization *org)
         if (matchCredential(org->ownerPwd, PASSWORD_PROMPT,
                 PASSWORD_MATCH_ERROR)) {
             // prints summary
+            puts("");
             printf("~~~~~ %s ~~~~~\n", org->name);
             printf("You collected %u donation(s) totaling $%.2lf after $%.2lf "
                    "in fees.\n", org->numDonations, org->donationSum,
                    org->feesSum);
 
-            exitValue = MODE_SUCCESS;
+            exitFlag = END_PROGRAM_FLAG;
         } else {
-            exitValue = MODE_FAIL;
+            exitFlag = DONATIONS_MODE_FLAG;
         }
     } else {
-        exitValue = MODE_FAIL;
+        exitFlag = DONATIONS_MODE_FLAG;
     }
 
-    return exitValue;
+    return exitFlag;
 } // report
