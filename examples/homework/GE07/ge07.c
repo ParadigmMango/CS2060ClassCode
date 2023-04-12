@@ -30,6 +30,7 @@ const char NO[STRING_SIZE] = "n";
 //## Error messages
 #define AGE_ERROR "Please enter a valid age: "
 #define MEM_ERROR "Not enough memory for new nodes."
+#define NODE_DEL_ERROR_EMPTY "There aren't any nodes in the list!"
 
 
 typedef struct pet {
@@ -167,6 +168,13 @@ void getAge(int *age);
 
 
 //## Node Functions 
+//! Deletes a pet from a linked list using a name to match against
+/*!
+  \param headPtr the location of the head of the linked list
+  \param name the name of the pet to remove
+ */
+void deletePet(PetNode **headPtr, const char *name);
+
 //! Inserts a pet into a linked list in alphabetical order of name.
 /*!
   \param headPtr the location of the head of the linked list
@@ -190,7 +198,7 @@ int main(void)
     PetNode *head;
     
     Pet pet_1 = {"Amy", 3};
-    Pet pet_2 = {"Charlie", 2};
+    Pet pet_2 = {"charlie", 2};
     Pet pet_3 = {"Shirly", 1};
 
     PetNode node_1 = {pet_1, NULL};
@@ -209,7 +217,9 @@ int main(void)
 
     printContents(&head2);
 
-    int zez = strCmpCaseless("abcdE", "ABcde");
+    deletePet(&head2, "AmY");
+    
+    printContents(&head2);
 
     return 0;
 } // main
@@ -398,7 +408,32 @@ void getAge(int *age)
 
 void deletePet(PetNode **headPtr, const char *name)
 {
-    free(*headPtr);
+    if (*headPtr == NULL) {
+        puts(NODE_DEL_ERROR_EMPTY);
+    } else {
+        PetNode *currNodePtr = *headPtr;
+        PetNode *prevNodePtr = NULL;
+
+        while (currNodePtr != NULL && strCmpCaseless(currNodePtr->pet.name,
+            name) != 0) {
+            prevNodePtr = currNodePtr;
+            currNodePtr = currNodePtr->nextNodePtr;
+        }
+
+        if (prevNodePtr == NULL) {
+            *headPtr = (*headPtr)->nextNodePtr;
+        
+            free(currNodePtr);
+            currNodePtr = NULL;        
+        } else if (currNodePtr != NULL) {
+            prevNodePtr->nextNodePtr = currNodePtr->nextNodePtr;
+
+            free(currNodePtr);
+            currNodePtr = NULL;
+        } else {
+            printf("%s is not in the list of pets!\n", name);
+        }
+    }
 } // delete pet
 
 void insertPet(PetNode **headPtr, Pet pet)
