@@ -190,7 +190,7 @@ void getAge(int *age);
  */
 void deletePet(PetNode **headPtr, const char *name);
 
-//! Emptys a list of all nodes and frees all memory allocated for it from the heap.
+//! Empties a list of all nodes and frees all memory allocated for it from the heap.
 /*!
   \param headPtr the location of the head of the linked list
  */
