@@ -15,21 +15,34 @@
 #include <string.h>
 
 
+//## Misc. constants
 #define MIN_AGE 1
 #define STRING_SIZE 80
 
+//## getYesNo constants
 const char YES[STRING_SIZE] = "y";
 const char NO[STRING_SIZE] = "n";
 
+//## Misc. messages
+#define EMPTYING_LIST_NOTIFICATION "\nEmptying list..."
+#define EMPTIED_LIST_NOTIFICATION "Done."
 #define LINKED_LIST_EMPTY "There aren't any names in the list."
 #define LINKED_LIST_HEADER "The names in alphabetical order:"
 
 //## Prompt messages
+#define ADD_PET_PROMPT "\nDo you want to add another pet? (y/n): "
 #define AGE_PROMPT "Enter age: "
+#define DEL_PET_PROMPT "\nDo you want to delete a pet from the list? (y/n): "
+#define NAME_DEL_PROMPT "\nEnter pet's name to delete: "
+#define NAME_GET_PROMPT "Enter name: "
 
 //## Error messages
+#define ADD_PET_ERROR "Please enter a (y)es or a (n)o: "
 #define AGE_ERROR "Please enter a valid age: "
+#define DEL_PET_ERROR "Please enter a (y)es or a (n)o: "
 #define MEM_ERROR "Not enough memory for new nodes."
+#define NAME_DEL_ERROR "Please enter a valid name: "
+#define NAME_GET_ERROR "Please enter a valid name: "
 #define NODE_DEL_ERROR_EMPTY "There aren't any nodes in the list!"
 
 
@@ -175,6 +188,12 @@ void getAge(int *age);
  */
 void deletePet(PetNode **headPtr, const char *name);
 
+//! Emptys a list of all nodes and frees all memory allocated for it from the heap.
+/*!
+  \param headPtr the location of the head of the linked list
+ */
+void emptyList(PetNode **headPtr);
+
 //! Inserts a pet into a linked list in alphabetical order of name.
 /*!
   \param headPtr the location of the head of the linked list
@@ -191,35 +210,43 @@ void printContents(PetNode **headPtr);
 
 int main(void)
 {
-    // int lel;
+    // initialize linked list and a temp pet variable
+    PetNode *head = NULL;
+    Pet newPet;
 
-    // getAge(&lel);
-    
-    PetNode *head;
-    
-    Pet pet_1 = {"Amy", 3};
-    Pet pet_2 = {"charlie", 2};
-    Pet pet_3 = {"Shirly", 1};
+    // initialize the pet and insert it into the list
+    getName(newPet.name, STRING_SIZE, NAME_GET_PROMPT, NAME_GET_ERROR);
+    getAge(&newPet.age);
+    insertPet(&head, newPet);
 
-    PetNode node_1 = {pet_1, NULL};
-    PetNode node_2 = {pet_2, NULL};
-    PetNode node_3 = {pet_3, NULL};
+    // ask the user if they want to add another pet until they say no
+    while (getYesOrNo(ADD_PET_PROMPT, ADD_PET_ERROR)) {
+        // set the newPet with new values and add that to the list
+        getName(newPet.name, STRING_SIZE, NAME_GET_PROMPT, NAME_GET_ERROR);
+        getAge(&newPet.age);
+        insertPet(&head, newPet);
+    } // linked list building loop
 
-    head = &node_1;
-    node_1.nextNodePtr = &node_2;
-    node_2.nextNodePtr = &node_3;
-    
-    PetNode *head2 = NULL;
+    printContents(&head);
 
-    insertPet(&head2, pet_2);
-    insertPet(&head2, pet_1);
-    insertPet(&head2, pet_3);
+    // ask the user if they want to remove a pet until they say no
+    while (getYesOrNo(DEL_PET_PROMPT, DEL_PET_ERROR)) {
+        // get the name of the pet to remove and try to remove it from the list
+        char nameToRemove[STRING_SIZE];
+        getName(nameToRemove, STRING_SIZE, NAME_DEL_PROMPT, NAME_DEL_ERROR);
+        deletePet(&head, nameToRemove);
 
-    printContents(&head2);
+        printContents(&head);
+    } // node deletion loop
 
-    deletePet(&head2, "AmY");
-    
-    printContents(&head2);
+    printContents(&head);
+
+    // empty the list
+    puts(EMPTYING_LIST_NOTIFICATION);
+    emptyList(&head);
+    puts(EMPTIED_LIST_NOTIFICATION);
+
+    printContents(&head);
 
     return 0;
 } // main
@@ -232,12 +259,14 @@ void clearBuffer(void)
 
 int strCmpCaseless(const char *str1, const char *str2)
 {
+    // create a lowercase version of each string
     char str1Lower[STRING_SIZE];
     toLower(str1, str1Lower);
 
     char str2Lower[STRING_SIZE];
     toLower(str2, str2Lower);
 
+    // compare the lowercase strings
     return strcmp(str1Lower, str2Lower);
 } // strCmpCaseless
 
@@ -347,12 +376,14 @@ bool getYesOrNo(const char *prompt, const char *error)
 
 bool strToInt(const char* str, int *num)
 {
+    // prepare variables for validation
 	char* end;
 	errno = 0;
 
 	long intTest = strtol(str, &end, 10);
     bool isValid;
 
+    // Test all possible cases where input is invalid
 	if (end == str) {
 		isValid = false;
 	} else if ('\0' != *end) {
@@ -364,6 +395,7 @@ bool strToInt(const char* str, int *num)
 	} else if (intTest < INT_MIN) {
 		isValid = false;
 	} else {
+        // set the input to the conversion if valid int
 		*num = (int) intTest;
 
         isValid = true;
@@ -381,7 +413,7 @@ void getInt(int *num, const char *prompt, const char *error, int min)
     bool getWordSuccess = getWord(word, STRING_SIZE);
     int intTest;
 
-    // Print errors until a valid word that also passes validate() is found
+    // Print errors until a valid word that is also a valid int is found
     while (!getWordSuccess || !strToInt(word, &intTest) || intTest < min) {
         printf("%s", error);
 
@@ -408,80 +440,119 @@ void getAge(int *age)
 
 void deletePet(PetNode **headPtr, const char *name)
 {
+    // test for the edge case where the list is already empty
     if (*headPtr == NULL) {
         puts(NODE_DEL_ERROR_EMPTY);
     } else {
+        // initialize node pointer for iteration
         PetNode *currNodePtr = *headPtr;
         PetNode *prevNodePtr = NULL;
 
+        // iterate until the end of the list is reach or the name is found
         while (currNodePtr != NULL && strCmpCaseless(currNodePtr->pet.name,
-            name) != 0) {
+               name) != 0) {
+            // move the node pointers forward
             prevNodePtr = currNodePtr;
             currNodePtr = currNodePtr->nextNodePtr;
         }
 
         if (prevNodePtr == NULL) {
+            // handles special case where the pet called name is found at the 
+            // beginning of the linked list
             *headPtr = (*headPtr)->nextNodePtr;
         
             free(currNodePtr);
             currNodePtr = NULL;        
         } else if (currNodePtr != NULL) {
+            // handles most cases(when the pet called name is found after the 
+            // first node)
             prevNodePtr->nextNodePtr = currNodePtr->nextNodePtr;
 
             free(currNodePtr);
             currNodePtr = NULL;
         } else {
+            // edge case where the list does not contain a pet called name
             printf("%s is not in the list of pets!\n", name);
         }
     }
 } // delete pet
 
+void emptyList(PetNode **headPtr)
+{
+    // set up node pointers for iteration
+    PetNode *currNodePtr = *headPtr;
+    PetNode *nextNodePtr = NULL;
+
+    // free the current node until there are no nodes left
+    while (currNodePtr != NULL) {
+        nextNodePtr = currNodePtr->nextNodePtr;
+        free(currNodePtr);
+        currNodePtr = nextNodePtr;
+    }
+
+    // set the head pointer to NULL
+    *headPtr = NULL;
+} // emptyList
+
 void insertPet(PetNode **headPtr, Pet pet)
 {
+    // attempt to allocate memory
     PetNode *newNodePtr = malloc(sizeof(PetNode));
 
+    // test for the edge case in which the os cannot give enough memory for the
+    // node
     if (newNodePtr == NULL) {
         puts(MEM_ERROR);
     } else {
+        // initialize newNode
         newNodePtr->nextNodePtr = NULL;
         newNodePtr->pet = pet;
 
+        // initialize node pointers for iteration
         PetNode *prevNodePtr = NULL;
         PetNode *currNodePtr = *headPtr;
 
+        // iterate forward until the end of the list or the new pet's name
+        // is lexicologically after the current pet's name
         while (currNodePtr != NULL &&
                strCmpCaseless(pet.name, currNodePtr->pet.name) > 0) {
             prevNodePtr = currNodePtr;
             currNodePtr = currNodePtr->nextNodePtr;
         }
 
+        // assign new node pointer to the prevNode's nextPtr or headPtr
+        // depending on if the linked list is empty
         if (prevNodePtr == NULL) {
             *headPtr = newNodePtr;
         } else {
             prevNodePtr->nextNodePtr = newNodePtr;
         }
 
+        // finally, reattach the follwoing nodes to the list by having the 
+        // newNode's nextPtr point to currNode
         newNodePtr->nextNodePtr = currNodePtr;
     }
 } // insertPet
 
 void printContents(PetNode **headPtr)
 {
+    puts("");
+
+    // handle if a linked list is empty
     if (*headPtr == NULL) {
         puts(LINKED_LIST_EMPTY);
     } else {
-        PetNode *currNode = *headPtr;
-
+        // print the header for the contents of the linked list
         puts(LINKED_LIST_HEADER);
 
+        // use a node pointer to iterate throught the linked list until the end
+        PetNode *currNode = *headPtr;
         while (currNode != NULL) {
+            // print the current pet's data
             Pet currPet = currNode->pet;
-
             printf("%s is %d years old.\n", currPet.name, currPet.age);
 
             currNode = currNode->nextNodePtr;
         }
     }
-
-    puts("");
 } // printContents
