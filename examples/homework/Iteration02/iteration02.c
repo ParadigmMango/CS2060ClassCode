@@ -79,14 +79,16 @@ const char NO[STRING_SIZE] = "n";
 
 
 //! An donor struct which packages all relevant information to itself.
-typedef struct donor {
+typedef struct donor
+{
     char firstName[STRING_SIZE];
     char lastName[STRING_SIZE];
     char zip[STRING_SIZE];
 } Donor;
 
 //! An organization struct which packages all relevant information to itself.
-typedef struct organization {
+typedef struct organization
+{
     // organziation properties
     char name[STRING_SIZE];
     char purpose[STRING_SIZE];
