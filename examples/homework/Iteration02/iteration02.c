@@ -1,9 +1,9 @@
-//!  Iteration 01: Implement Fundraiser Project
+//!  Iteration 02: Expand Fundraiser Project
 /*!
   \file implementation01.c
   \author Jacob Hartt (jacobjhartt@gmail.com)
-  \version 1.0
-  \date 04-04-2023
+  \version 2.0
+  \date 04-23-2023
  */
 
 #include <ctype.h>
@@ -128,6 +128,12 @@ void clearBuffer(void);
  */
 bool matchCredential(const char *cred, const char *prompt, const char
                      *badMatchError);
+//! Prints a receipt for an organization.
+/*! 
+  \param org the organization you wish to have a receipt printed for
+  \param fee the fees 
+ */
+void printReceipt(const Organization *org, double donation);
 //! A safer version of strncpy that null terminates all srcs
 /*!
   \param dest the destination string to write to
@@ -176,51 +182,45 @@ bool getWord(char *word, size_t wordSize);
   \param error the error message which also asks for an input again
  */
 void getValidatedWord(char *word, size_t wordSize, bool (*validate)(const char
-                      *, size_t), const char *prompt, const char *error);
+                      *), const char *prompt, const char *error);
 
 //## String input validation functions
 //! Determine if a string is an email address
 /*!
   \param email the string to be validated
-  \param emailSize the size of the string to be validated
   \return whether or not the string is an email address
  */
-bool isEmail(const char *email, size_t emailSize); 
+bool isEmail(const char *email); 
 //! Determine if a string is a name
 /*!
-  \param email the string to be validated
-  \param emailSize the size of the string to be validated
+  \param name the string to be validated
   \return whether or not the string is a name
  */
-bool isName(const char *name, size_t nameSize);
+bool isName(const char *name);
 //! Determine if a string is a valid password
 /*!
-  \param email the string to be validated
-  \param emailSize the size of the string to be validated
+  \param password the string to be validated
   \return whether or not the string is a valid password
  */
-bool isPassword(const char *password, size_t passwordSize);
+bool isPassword(const char *password);
 //! Determine if a string is a URL
 /*!
   \param url the string to be validated
-  \param urlSize the size of the string to be validated
   \return whether or not the string is a URL
  */
-bool isURL(const char *url, size_t urlSize);
+bool isURL(const char *url);
 //! Determine if a string is a yes or no
 /*!
   \param yesNo the string to be validated
-  \param yesNoSize the size of the string to be validated
   \return whether or not the string is a yes or no
  */
-bool isYesOrNo(const char *yesNo, size_t yesNoSize);
+bool isYesOrNo(const char *yesNo);
 //! Determine if a string is an email address
 /*!
-  \param email the string to be validated
-  \param emailSize the size of the string to be validated
+  \param zip the string to be validated
   \return whether or not the string is an email address
  */
-bool isZip(const char *zip, size_t zipSize);
+bool isZip(const char *zip);
 
 //## String input wrapper functions for getValidatedWord()
 //! Gets a valid email from the user
@@ -291,7 +291,7 @@ void getPosDouble(double *num, const char *prompt, const char *error,
   \param donationSize the size of the string to validate
   \return Whether or not the string is a valid donation amount
  */
-bool isDonation(const char *donation, size_t donationSize);
+bool isDonation(const char *donation);
 //! Gets a valid donation from the user.
 /*!
   \param donation the address of the double to write the donation into
@@ -424,6 +424,21 @@ bool matchCredential(const char *cred, const char *prompt, const char
     return isValid;
 } // matchCredential
 
+void printReceipt(const Organization *org, double donation)
+{
+    // create formatted timestamp
+    char timeStamp[TIME_STAMP_SIZE];
+    time_t time_var = time(NULL);
+    strftime(timeStamp, sizeof(timeStamp), "%D - %I:%M%p",
+                localtime(&time_var));
+
+    // print the actual receipt
+    puts("");
+    printf("Organization: %s\n", org->name);
+    printf("Donation Amount: $%.2lf\n", donation);
+    printf("Donation Date: %s\n", timeStamp);
+} // print receipt
+
 void strNCpySafe(char *dest, const char *src, size_t count)
 {
     strncpy(dest, src, count);
@@ -494,36 +509,36 @@ bool getWord(char *word, size_t wordSize)
 } // getWord
 
 void getValidatedWord(char *word, size_t wordSize, bool (*validate)(const char
-                      *, size_t), const char *prompt, const char *error)
+                      *), const char *prompt, const char *error)
 {
     printf("%s", prompt);
 
     bool getWordSuccess = getWord(word, wordSize);
 
     // Print errors until a valid word that also passes validate() is found
-    while (!getWordSuccess || !(*validate)(word, wordSize)) {
+    while (!getWordSuccess || !(*validate)(word)) {
         printf("%s", error);
 
         getWordSuccess = getWord(word, wordSize);
     }
 } // getValidatedWord
 
-bool isEmail(const char *email, size_t emailSize)
+bool isEmail(const char *email)
 {
     return getYesOrNo(EMAIL_VALID_PROMPT, EMAIL_VALID_ERROR);
 } // isEmail
 
-bool isName(const char *name, size_t nameSize)
+bool isName(const char *name)
 {
     return true;
 } // isName
 
-bool isPassword(const char *password, size_t passwordSize)
+bool isPassword(const char *password)
 {
     return true;
 } // isPassword
 
-bool isURL(const char *url, size_t urlSize)
+bool isURL(const char *url)
 {
     size_t urlLen = strlen(url);
 
@@ -559,7 +574,7 @@ bool isURL(const char *url, size_t urlSize)
     return isURLValid;
 } // isURL
 
-bool isYesNo(const char *yesNo, size_t yesNoSize)
+bool isYesNo(const char *yesNo)
 {
     // lowercase the input string
     char lowerYesNo[STRING_SIZE];
@@ -571,7 +586,7 @@ bool isYesNo(const char *yesNo, size_t yesNoSize)
            strcmp(lowerYesNo, NO) == 0;
 } // isYesNo
 
-bool isZip(const char *zip, size_t zipSize)
+bool isZip(const char *zip)
 {
     bool isZipValid = true;
 
@@ -682,7 +697,7 @@ void getPosDouble(double *num, const char *prompt, const char *error,
     *num = doubleTest;
 } // getDouble
 
-bool isDonation(const char *donation, size_t donationSize)
+bool isDonation(const char *donation)
 {
     bool isValid = false;
 
@@ -791,29 +806,19 @@ int donate(Organization *org, Donor *donor)
         // track donations and fees
         double fee = donation * TRANSACTION_FEE;
         org->feesSum += fee;
-        
-        donation -= fee;
-        org->donationSum += donation;
+
+        double effectiveDonation = donation - fee;
+        org->donationSum += effectiveDonation;
 
         org->numDonations++;
 
         // print donation thank you
         printf("Thank you for your donation. There is a %.1lf%% credit card" 
                "processing fee of %.2lf. %.2lf will be donated.\n",
-                100 * TRANSACTION_FEE, fee, donation);
+                100 * TRANSACTION_FEE, fee, effectiveDonation);
         
         if (getYesOrNo(RECEIPT_PROMPT, RECEIPT_ERROR)) {
-            // create formatted timestamp
-            char timeStamp[TIME_STAMP_SIZE];
-            time_t time_var = time(NULL);
-            strftime(timeStamp, sizeof(timeStamp), "%D - %I:%M%p",
-                     localtime(&time_var));
-
-            // print the actual receipt
-            puts("");
-            printf("Organization: %s\n", org->name);
-            printf("Donation Amount: $%.2lf\n", fee + donation);
-            printf("Donation Date: %s\n", timeStamp);
+            printReceipt(org, donation);
         }
 
         exitValue = DONATIONS_MODE_FLAG;
