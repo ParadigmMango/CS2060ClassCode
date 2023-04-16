@@ -69,7 +69,7 @@ void clearBuffer(void);
   \param str2 the string to compare with
   \return the return value of strcmp
  */
-int strCmpCaseless(const char *str1, const char *str2);
+int caselessStrcmp(const char *str1, const char *str2);
 
 //! A safer version of strncpy that null terminates all srcs
 /*!
@@ -259,7 +259,7 @@ void clearBuffer(void)
     while (getchar() != '\n');
 } // clearBuffer
 
-int strCmpCaseless(const char *str1, const char *str2)
+int caselessStrcmp(const char *str1, const char *str2)
 {
     // create a lowercase version of each string
     char str1Lower[STRING_SIZE];
@@ -451,7 +451,7 @@ void deletePet(PetNode **headPtr, const char *name)
         PetNode *prevNodePtr = NULL;
 
         // iterate until the end of the list is reach or the name is found
-        while (currNodePtr != NULL && strCmpCaseless(currNodePtr->pet.name,
+        while (currNodePtr != NULL && caselessStrcmp(currNodePtr->pet.name,
                name) != 0) {
             // move the node pointers forward
             prevNodePtr = currNodePtr;
@@ -517,7 +517,7 @@ void insertPet(PetNode **headPtr, Pet pet)
         // iterate forward until the end of the list or the new pet's name
         // is lexicologically after the current pet's name
         while (currNodePtr != NULL &&
-               strCmpCaseless(pet.name, currNodePtr->pet.name) > 0) {
+               caselessStrcmp(pet.name, currNodePtr->pet.name) > 0) {
             prevNodePtr = currNodePtr;
             currNodePtr = currNodePtr->nextNodePtr;
         }

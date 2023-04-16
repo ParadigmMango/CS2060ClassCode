@@ -136,6 +136,13 @@ bool matchCredential(const char *cred, const char *prompt, const char
   \param fee the fees 
  */
 void printReceipt(const Organization *org, double donation);
+//! Compares two strings in a caseless manner.
+/*!
+  \param str1 the string to compare against
+  \param str2 the string to compare with
+  \return the return value of strcmp
+ */
+int caselessStrcmp(const char *str1, const char *str2);
 //! A safer version of strncpy that null terminates all srcs
 /*!
   \param dest the destination string to write to
@@ -441,6 +448,19 @@ void printReceipt(const Organization *org, double donation)
     printf("Donation Date: %s\n", timeStamp);
 } // print receipt
 
+int caselessStrcmp(const char *str1, const char *str2)
+{
+    // create a lowercase version of each string
+    char str1Lower[STRING_SIZE];
+    toLower(str1, str1Lower);
+
+    char str2Lower[STRING_SIZE];
+    toLower(str2, str2Lower);
+
+    // compare the lowercase strings
+    return strcmp(str1Lower, str2Lower);
+} // strCmpCaseless
+
 void strNCpySafe(char *dest, const char *src, size_t count)
 {
     strncpy(dest, src, count);
@@ -578,14 +598,9 @@ bool isURL(const char *url)
 
 bool isYesNo(const char *yesNo)
 {
-    // lowercase the input string
-    char lowerYesNo[STRING_SIZE];
-    strNCpySafe(lowerYesNo, yesNo, strlen(yesNo));
-    toLower(lowerYesNo, lowerYesNo);
-
-    // check if the lowercase string is equal to YES or NO
-    return strcmp(lowerYesNo, YES) == 0 ||
-           strcmp(lowerYesNo, NO) == 0;
+    // check if the string is caselessly equal to YES or NO
+    return caselessStrcmp(yesNo, YES) == 0 ||
+           caselessStrcmp(yesNo, NO) == 0;
 } // isYesNo
 
 bool isZip(const char *zip)
@@ -644,13 +659,8 @@ bool getYesOrNo(const char *prompt, const char *error)
     char rawStr[STRING_SIZE];
     getValidatedWord(rawStr, STRING_SIZE, &isYesNo, prompt, error);
 
-    // lower case the raw sting
-    char lowerRawStr[STRING_SIZE];
-    strNCpySafe(lowerRawStr, rawStr, STRING_SIZE);
-    toLower(lowerRawStr, lowerRawStr);
-
-    // compare the lowercase string to the yes string
-    return strcmp(YES, lowerRawStr) == 0;
+    // caselessly compare the lowercase string to the yes string
+    return caselessStrcmp(YES, rawStr) == 0;
 } // getYesOrNo
 
 void getZip(char *zip, size_t zipSize)
