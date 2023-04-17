@@ -28,11 +28,10 @@
 #define DONATION_PROMPT "Enter your donation amount($): "
 #define EMAIL_PROMPT "Enter email address: "
 #define EMAIL_VALID_PROMPT "Is this email correct? (y)es or (n)o: "
-#define FIRST_NAME_PROMPT "Enter first name: "
 #define GOAL_PROMPT "Enter the goal amount you want to raise: "
-#define LAST_NAME_PROMPT "Enter last name: "
 #define ORG_NAME_PROMPT "Enter your organization's name: "
 #define ORG_PURPOSE_PROMPT "State the purpose of your fundraiser: "
+#define FIRST_LAST_NAME_PROMPT "Enter first and last name: "
 #define PASSWORD_PROMPT "Enter password: "
 #define RECEIPT_PROMPT "Do you want a receipt, (y)es or (n)o? "
 #define URL_PROMPT "Enter URL for your fundraiser: "
@@ -43,9 +42,7 @@
 #define EMAIL_ERROR "That email is not valid, please enter another: "
 #define EMAIL_MATCH_ERROR "That email does not match, please enter another: "
 #define EMAIL_VALID_ERROR "Please enter (y)es or (n)o: "
-#define FIRST_NAME_ERROR "That first name is not valid, please enter another: "
 #define GOAL_ERROR "That goal amount is not valid, please enter another: "
-#define LAST_NAME_ERROR "That last name is not valid, please enter another: "
 #define MODE_ERROR "A mode error has occurred."
 #define PASSWORD_ERROR "That password is not valid, please enter another: "
 #define PASSWORD_MATCH_ERROR "That password does not match, enter another: "
@@ -81,8 +78,7 @@ const char NO[STRING_SIZE] = "n";
 //! An donor struct which packages all relevant information to itself.
 typedef struct donor
 {
-    char firstName[STRING_SIZE];
-    char lastName[STRING_SIZE];
+    char firstLastName[STRING_SIZE];
     char zip[STRING_SIZE];
 } Donor;
 
@@ -98,8 +94,7 @@ typedef struct organization
     // owner properties
     char ownerEmail[STRING_SIZE];
     char ownerPwd[STRING_SIZE];
-    char ownerFirstName[STRING_SIZE];
-    char ownerLastName[STRING_SIZE];
+    char ownerFirstLastName[STRING_SIZE];
 
     // donation tracking
     unsigned int numDonations;
@@ -143,6 +138,12 @@ void printReceipt(const Organization *org, double donation);
   \return the return value of strcmp
  */
 int caselessStrcmp(const char *str1, const char *str2);
+//! Generates a url given an org's name
+/*!
+  \param url the string to write the org's url into
+  \param name the name of the organization
+ */
+void generateUrl(char url[STRING_SIZE], const char name[STRING_SIZE]);
 //! A safer version of strncpy that null terminates all srcs
 /*!
   \param dest the destination string to write to
@@ -200,24 +201,12 @@ void getValidatedWord(char *word, size_t wordSize, bool (*validate)(const char
   \return whether or not the string is an email address
  */
 bool isEmail(const char *email); 
-//! Determine if a string is a name
-/*!
-  \param name the string to be validated
-  \return whether or not the string is a name
- */
-bool isName(const char *name);
 //! Determine if a string is a valid password
 /*!
   \param password the string to be validated
   \return whether or not the string is a valid password
  */
 bool isPassword(const char *password);
-//! Determine if a string is a URL
-/*!
-  \param url the string to be validated
-  \return whether or not the string is a URL
- */
-bool isURL(const char *url);
 //! Determine if a string is a yes or no
 /*!
   \param yesNo the string to be validated
@@ -238,27 +227,12 @@ bool isZip(const char *zip);
   \param emailSize the size of the email string
  */
 void getEmail(char *email, size_t emailSize);
-//! Gets a valid name from the user
-/*!
-  \param name the string to write the name into
-  \param nameSize the size of the name string
-  \param prompt the intial user prompt
-  \param error the error prompt which agains asks the user for input
- */
-void getName(char *name, size_t nameSize, const char *prompt, const char
-             *error);
 //! Gets a valid password from the user
 /*!
   \param password the string to write the password into
   \param passwordSize the size of the password string
  */
 void getPassword(char *password, size_t passwordSize);
-//! Gets a valid url from the user
-/*!
-  \param url the string to write the URL into
-  \param urlSize the size of the URL string
- */
-void getURL(char *url, size_t urlSize);
 //! Get a yes or no from the user
 /*!
   \param prompt the prompt to provide the user with for retrieving a yes or no
@@ -461,6 +435,27 @@ int caselessStrcmp(const char *str1, const char *str2)
     return strcmp(str1Lower, str2Lower);
 } // strCmpCaseless
 
+void generateUrl(char url[STRING_SIZE], const char name[STRING_SIZE]) {
+    char nameInUrl[STRING_SIZE];
+    toLower(name, nameInUrl);
+
+    char *currCharPtr = nameInUrl;
+    while (*currCharPtr != '\0') {
+        if (*currCharPtr == ' ') {
+            *currCharPtr = '-';
+        }
+
+        currCharPtr++;
+    }
+
+    strNCpySafe(url, LINK_BEGINNING, LINK_BEGINNING_SIZE);
+
+    strncpy(url + LINK_BEGINNING_SIZE, nameInUrl, strlen(nameInUrl));
+    
+    strncpy(url + LINK_BEGINNING_SIZE + strlen(nameInUrl), LINK_END,
+            LINK_END_SIZE + 1);
+} // generateUrl
+
 void strNCpySafe(char *dest, const char *src, size_t count)
 {
     strncpy(dest, src, count);
@@ -550,51 +545,10 @@ bool isEmail(const char *email)
     return getYesOrNo(EMAIL_VALID_PROMPT, EMAIL_VALID_ERROR);
 } // isEmail
 
-bool isName(const char *name)
-{
-    return true;
-} // isName
-
 bool isPassword(const char *password)
 {
     return true;
 } // isPassword
-
-bool isURL(const char *url)
-{
-    size_t urlLen = strlen(url);
-
-    bool isURLValid = true;
-
-    // Check that there is enough space for at least one character between 
-    // link beginning and link end
-    if (urlLen < LINK_BEGINNING_SIZE + LINK_END_SIZE + 1) {
-        isURLValid = false;
-    } else {
-        // Check that the link beginning is valid
-        char linkBeginning[STRING_SIZE];
-
-        strNCpySafe(linkBeginning, url, LINK_BEGINNING_SIZE);
-
-        if (strcmp(linkBeginning, LINK_BEGINNING) != 0) {
-            isURLValid = false;
-        } else {
-            // Check that there is a questionmark in the string
-            char *questionMarkPtr = strchr(url, '?');
-
-            if (questionMarkPtr == NULL) {
-                isURLValid = false;
-            } else {
-                // Check that the link ending is valid
-                if (strcmp(questionMarkPtr, LINK_END) != 0) {
-                    isURLValid = false;
-                } // link end guard clause
-            } // question mark guard clause
-        } // link beginnning guard clause
-    } // url length guard clause
-
-    return isURLValid;
-} // isURL
 
 bool isYesNo(const char *yesNo)
 {
@@ -637,21 +591,11 @@ void getEmail(char *email, size_t emailSize)
     getValidatedWord(email, emailSize, &isEmail, EMAIL_PROMPT, EMAIL_ERROR);
 } // getEmail
 
-void getName(char *name, size_t nameSize, const char *prompt, const char *error)
-{
-    getValidatedWord(name, nameSize, &isName, prompt, error);
-} // getName
-
 void getPassword(char *password, size_t passwordSize)
 {
     getValidatedWord(password, passwordSize, &isPassword, PASSWORD_PROMPT,
                      PASSWORD_ERROR);
 } // getPassword
-
-void getURL(char *url, size_t urlSize)
-{
-    getValidatedWord(url, urlSize, &isURL, URL_PROMPT, URL_ERROR);
-} // getURL
 
 bool getYesOrNo(const char *prompt, const char *error)
 {
@@ -757,13 +701,12 @@ int setUp(Organization *org)
     // Grab user inputs
     getLineWithPrompt(org->name, STRING_SIZE, ORG_NAME_PROMPT);
     getLineWithPrompt(org->purpose, STRING_SIZE, ORG_PURPOSE_PROMPT);
-    getName(org->ownerFirstName, STRING_SIZE, FIRST_NAME_PROMPT,
-            FIRST_NAME_ERROR);
-    getName(org->ownerLastName, STRING_SIZE, LAST_NAME_PROMPT, LAST_NAME_ERROR);
+    getLineWithPrompt(org->ownerFirstLastName, STRING_SIZE, 
+                      FIRST_LAST_NAME_PROMPT);
     getPosDouble(&org->goalAmount, GOAL_PROMPT, GOAL_ERROR, MIN_GOAL);
     getEmail(org->ownerEmail, STRING_SIZE);
     getPassword(org->ownerPwd, STRING_SIZE);
-    getURL(org->url, STRING_SIZE);
+    generateUrl(org->url, org->name);
 
     // Initialize count and sum variables
     org->numDonations = 0;
@@ -773,8 +716,8 @@ int setUp(Organization *org)
     
     // Print out thank you message. Not a constant in case more variables in the
     // message are desired.
-    printf("Thank you %s %s. The url to raise funds for %s is %s.\n\n",
-           org->ownerFirstName, org->ownerLastName, org->name, org->url);
+    printf("Thank you %s. The url to raise funds for %s is %s.\n\n",
+           org->ownerFirstLastName, org->name, org->url);
 
     return DONATIONS_MODE_FLAG;
 } // setUp
@@ -793,7 +736,7 @@ int donate(Organization *org, Donor *donor)
     if (org->donationSum >= org->goalAmount) {
         puts("We have reached our goal but can still use the donations.");
     } else {
-        printf("We are %2.0lf%% towards our goal of $%.2lf.\n",
+        printf("We are %2.2lf%% towards our goal of $%.2lf.\n",
                (org->donationSum / org->goalAmount) * 100, org->goalAmount);
     }
     puts("");
@@ -809,10 +752,8 @@ int donate(Organization *org, Donor *donor)
     // add donation
     else {
         // get donor info
-        getName(donor->firstName, STRING_SIZE, FIRST_NAME_PROMPT,
-                FIRST_NAME_ERROR);
-        getName(donor->lastName, STRING_SIZE, LAST_NAME_PROMPT,
-                LAST_NAME_ERROR);
+        getLineWithPrompt(donor->firstLastName, STRING_SIZE, 
+                          FIRST_LAST_NAME_PROMPT);
         getZip(donor->zip, STRING_SIZE);
 
         // track donations and fees
