@@ -439,6 +439,7 @@ void generateUrl(char url[STRING_SIZE], const char name[STRING_SIZE]) {
     char nameInUrl[STRING_SIZE];
     toLower(name, nameInUrl);
 
+    // replace all spaces in name with dashes
     char *currCharPtr = nameInUrl;
     while (*currCharPtr != '\0') {
         if (*currCharPtr == ' ') {
@@ -448,10 +449,9 @@ void generateUrl(char url[STRING_SIZE], const char name[STRING_SIZE]) {
         currCharPtr++;
     }
 
+    // Copy the link's beginning, name, and end into url
     strNCpySafe(url, LINK_BEGINNING, LINK_BEGINNING_SIZE);
-
     strncpy(url + LINK_BEGINNING_SIZE, nameInUrl, strlen(nameInUrl));
-    
     strncpy(url + LINK_BEGINNING_SIZE + strlen(nameInUrl), LINK_END,
             LINK_END_SIZE + 1);
 } // generateUrl
