@@ -67,6 +67,11 @@ const char NO[STRING_SIZE] = "n";
 //## Zip Constants
 #define ZIP_SIZE 5
 
+//## Linked List Constants
+#define MEM_ERROR "Not enough memory for new nodes."
+#define LINKED_LIST_EMPTY "There aren't any names in the list."
+#define LINKED_LIST_HEADER "Organization\t\tGoal Amount\t\tCurrent Donations"
+
 //## Mode Constants
 #define MODE_SUCCESS_ADMIN 42
 #define SETUP_MODE_FLAG 0
@@ -88,6 +93,7 @@ typedef struct organization
     // organziation properties
     char name[STRING_SIZE];
     char purpose[STRING_SIZE];
+    char receiptPath[STRING_SIZE];
     char url[STRING_SIZE];
     double goalAmount;
 
@@ -104,6 +110,13 @@ typedef struct organization
     // donor tracking
     unsigned int numDonors;
 } Organization; 
+
+//! A node struct for organization linked lists.
+typedef struct orgNode
+{
+    Organization org;
+    struct orgNode *nextNodePtr;
+} OrgNode;
 
 //## Mode Constants
 #define SETUP_MODE_FLAG 0
@@ -281,6 +294,31 @@ bool isDonation(const char *donation);
  */
 void getDonation(double *donation);
 
+//## Linked list functions
+//! Empties a list of all nodes and frees all memory allocated for it from the heap.
+/*!
+  \param headPtr the location of the head of the linked list
+ */
+void emptyList(OrgNode **headPtr);
+//! Inserts an organization into a linked list in alphabetical order of name.
+/*!
+  \param headPtr the location of the head of the linked list
+  \param org the organization to insert to the list
+ */
+void insertOrgToList(OrgNode **headPtr, Organization org);
+//! Print the contents of a  linked list.
+/*!
+  \param headPtr the location of the head of the linked list
+ */
+void printListContents(OrgNode **headPtr);
+//! Selects an organization from a linked list given it's name
+/*!
+  \param orgPtr the pointer to point to the org whose name is name
+  \param headPtr the location of the head of the linked list
+  \param name the name to select for in the list
+ */
+void selectOrgFromList(Organization **orgPtr, OrgNode **headPtr, const char *name);
+
 //## Modes
 //! Sets up an org struct with user input.
 /*!
@@ -306,6 +344,28 @@ int report(const Organization *org);
 
 int main(void)
 {
+    OrgNode *head = NULL;
+    Organization org1;
+    strcpy(org1.name, "chez");
+    Organization org2;
+    strcpy(org2.name, "Zech");
+    Organization org3;
+    strcpy(org3.name, "ARZZZz");
+    
+    insertOrgToList(&head, org1);
+    insertOrgToList(&head, org2);
+    insertOrgToList(&head, org3);
+
+    printListContents(&head);
+
+    Organization *lele;
+
+    selectOrgFromList(&lele, &head, "chez"); 
+
+    emptyList(&head);
+
+
+
     Organization org;
 
     // Ignore this for now: it is an unused variable used to allow donations to 
@@ -695,6 +755,102 @@ void getDonation(double *donation)
         strToPosDouble(rawDonation, donation, MIN_DONATION);
     }
 } // getDonation
+
+void emptyList(OrgNode **headPtr)
+{
+    // set up node pointers for iteration
+    OrgNode *currNodePtr = *headPtr;
+    OrgNode *nextNodePtr = NULL;
+
+    // free the current node until there are no nodes left
+    while (currNodePtr != NULL) {
+        nextNodePtr = currNodePtr->nextNodePtr;
+        free(currNodePtr);
+        currNodePtr = nextNodePtr;
+    }
+
+    // set the head pointer to NULL
+    *headPtr = NULL;
+} // emptyList
+
+void insertOrgToList(OrgNode **headPtr, Organization org)
+{
+    // attempt to allocate memory
+    OrgNode *newNodePtr = malloc(sizeof(OrgNode));
+
+    // test for the edge case in which the os cannot give enough memory for the
+    // node
+    if (newNodePtr == NULL) {
+        puts(MEM_ERROR);
+    } else {
+        // initialize newNode
+        newNodePtr->nextNodePtr = NULL;
+        newNodePtr->org = org;
+
+        // initialize node pointers for iteration
+        OrgNode *prevNodePtr = NULL;
+        OrgNode *currNodePtr = *headPtr;
+
+        // iterate forward until the end of the list or the new pet's name
+        // is lexicologically after the current pet's name
+        while (currNodePtr != NULL &&
+               caselessStrcmp(org.name, currNodePtr->org.name) > 0) {
+            prevNodePtr = currNodePtr;
+            currNodePtr = currNodePtr->nextNodePtr;
+        }
+
+        // assign new node pointer to the prevNode's nextPtr or headPtr
+        // depending on if the linked list is empty
+        if (prevNodePtr == NULL) {
+            *headPtr = newNodePtr;
+        } else {
+            prevNodePtr->nextNodePtr = newNodePtr;
+        }
+
+        // finally, reattach the follwoing nodes to the list by having the 
+        // newNode's nextPtr point to currNode
+        newNodePtr->nextNodePtr = currNodePtr;
+    }
+} // insertPet
+
+void printListContents(OrgNode **headPtr)
+{
+    puts("");
+
+    // handle if a linked list is empty
+    if (*headPtr == NULL) {
+        puts(LINKED_LIST_EMPTY);
+    } else {
+        // print the header for the contents of the linked list
+        puts(LINKED_LIST_HEADER);
+
+        // use a node pointer to iterate throught the linked list until the end
+        OrgNode *currNode = *headPtr;
+        while (currNode != NULL) {
+            // print the current org's data
+            Organization currOrg = currNode->org;
+            printf("%-20s\t$%-16.2f\t%-16.2f\n", currOrg.name,
+                   currOrg.goalAmount, currOrg.donationSum);
+
+            currNode = currNode->nextNodePtr;
+        }
+    }
+} // printContents
+
+void selectOrgFromList(Organization **orgPtr, OrgNode **headPtr, const char *name)
+{
+    OrgNode *currNodePtr = *headPtr;
+
+    while (currNodePtr != NULL && strcmp(currNodePtr->org.name, name) != 0) {
+        currNodePtr = currNodePtr->nextNodePtr;
+    }
+
+    if (currNodePtr == NULL) {
+        *orgPtr = NULL;
+    } else {
+        *orgPtr = &(currNodePtr->org);
+    }
+} // selectOrgFromList
 
 int setUp(Organization *org)
 {
