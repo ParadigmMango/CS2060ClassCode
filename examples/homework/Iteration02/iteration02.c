@@ -29,6 +29,7 @@
 #define EMAIL_PROMPT "Enter email address: "
 #define EMAIL_VALID_PROMPT "Is this email correct? (y)es or (n)o: "
 #define GOAL_PROMPT "Enter the goal amount you want to raise: "
+#define NEW_ORG_PROMPT "Do you wish to add another fundraiser? (y)es or (n)o: "
 #define ORG_NAME_PROMPT "Enter your organization's name: "
 #define ORG_PURPOSE_PROMPT "State the purpose of your fundraiser: "
 #define FIRST_LAST_NAME_PROMPT "Enter first and last name: "
@@ -44,6 +45,7 @@
 #define EMAIL_VALID_ERROR "Please enter (y)es or (n)o: "
 #define GOAL_ERROR "That goal amount is not valid, please enter another: "
 #define MODE_ERROR "A mode error has occurred."
+#define NEW_ORG_ERROR "Please enter (y)es or (n)o: "
 #define PASSWORD_ERROR "That password is not valid, please enter another: "
 #define PASSWORD_MATCH_ERROR "That password does not match, enter another: "
 #define RECEIPT_ERROR "Please enter (y)es or (n)o: "
@@ -54,11 +56,13 @@
 #define ADMIN_MODE "q"
 #define ADMIN_NUM -1
 
-//## URL Constants
+//## String Building Constants
 #define LINK_BEGINNING "https:donate.com/"
 #define LINK_BEGINNING_SIZE 17
 #define LINK_END "?form=popup#"
 #define LINK_END_SIZE 12
+#define PATH_END "-receipts.txt"
+#define PATH_END_SIZE 13
 
 //## Yes/No Constants
 const char YES[STRING_SIZE] = "y";
@@ -68,6 +72,7 @@ const char NO[STRING_SIZE] = "n";
 #define ZIP_SIZE 5
 
 //## Linked List Constants
+#define CREATE_LL_RECEIPT_MODE "w"
 #define MEM_ERROR "Not enough memory for new nodes."
 #define LINKED_LIST_EMPTY "There aren't any names in the list."
 #define LINKED_LIST_HEADER "Organization\t\tGoal Amount\t\tCurrent Donations"
@@ -151,6 +156,13 @@ void printReceipt(const Organization *org, double donation);
   \return the return value of strcmp
  */
 int caselessStrcmp(const char *str1, const char *str2);
+//! Generates a receipt path given an org's name
+/*!
+  \param receiptPath the string to write the org path into
+  \param name the name of the organization
+ */
+void generateReceiptPath(char receiptPath[STRING_SIZE],
+                         const char name[STRING_SIZE]);
 //! Generates a url given an org's name
 /*!
   \param url the string to write the org's url into
@@ -172,6 +184,12 @@ void strNCpySafe(char *dest, const char *src, size_t count);
   \param lowerStr the string to write the lowercase version of rawStr into
  */
 void toLower(const char *rawStr, char *lowerStr);
+//! Turns any input string into lowercase skewercase form
+/*!
+  \param src the source string
+  \param skewerCase the string to write the skewercase version to
+ */
+void toSkewerCase(const char *src, char *skewerCase);
 
 //## Core string input toolchain
 //! Get a line string from the user
@@ -320,53 +338,31 @@ void printListContents(OrgNode **headPtr);
 void selectOrgFromList(Organization **orgPtr, OrgNode **headPtr, const char *name);
 
 //## Modes
-//! Sets up an org struct with user input.
+//! Sets up an org linked list with user input.
 /*!
-  \param org the pointer to the organization to initialize
-  \return whether the mode was successful
+  \param headPtr the pointer to the head of the linked list to fill
+  \return a mode flag
  */
-int setUp(Organization *org);
+int setUp(OrgNode **headPtr);
 //! Have a user donate to the organization.
 /*!
   \param org the pointer to the organization to donate to
   \param donor the pointer to a donor struct to track donors
-  \return whether the mode was successful or if to go to admin mode
+  \return a mode flag
  */
 int donate(Organization *org, Donor *donor);
 //! Enter the reports mode which prints out organization details and ends the
 //! program.
 /*!
   \param org the organization to print details about
-  \return whether the mode was succeeded or to go back to donations mod
+  \return a mode flag
  */
 int report(const Organization *org);
 
 
 int main(void)
 {
-    OrgNode *head = NULL;
-    Organization org1;
-    strcpy(org1.name, "chez");
-    Organization org2;
-    strcpy(org2.name, "Zech");
-    Organization org3;
-    strcpy(org3.name, "ARZZZz");
-    
-    insertOrgToList(&head, org1);
-    insertOrgToList(&head, org2);
-    insertOrgToList(&head, org3);
-
-    printListContents(&head);
-
-    Organization *lele;
-
-    selectOrgFromList(&lele, &head, "chez"); 
-
-    emptyList(&head);
-
-
-
-    Organization org;
+    OrgNode *headPtr;
 
     // Ignore this for now: it is an unused variable used to allow donations to 
     // run when donors are not tracked for the moment.
@@ -381,15 +377,15 @@ int main(void)
         // indicates with a flag
         switch (currFlag) {
           case SETUP_MODE_FLAG:
-            currFlag = setUp(&org);
+            currFlag = setUp(&headPtr);
             break;
         
           case DONATIONS_MODE_FLAG:
-            currFlag = donate(&org, &dummyDonor);
+            // currFlag = donate(&org, &dummyDonor);
             break;
 
           case REPORT_MODE_FLAG:
-            currFlag = report(&org);
+            // currFlag = report(&org);
             break;
         
           default:
@@ -495,19 +491,19 @@ int caselessStrcmp(const char *str1, const char *str2)
     return strcmp(str1Lower, str2Lower);
 } // strCmpCaseless
 
+void generateReceiptPath(char receiptPath[STRING_SIZE],
+                         const char name[STRING_SIZE]) {
+    char nameInPath[STRING_SIZE];
+    toSkewerCase(name, nameInPath);
+
+    // Copy the link's beginning, name, and end into url
+    strNCpySafe(receiptPath, nameInPath, strlen(nameInPath));
+    strncpy(receiptPath + strlen(nameInPath), PATH_END, PATH_END_SIZE + 1);
+} // generateReceiptPath
+
 void generateUrl(char url[STRING_SIZE], const char name[STRING_SIZE]) {
     char nameInUrl[STRING_SIZE];
-    toLower(name, nameInUrl);
-
-    // replace all spaces in name with dashes
-    char *currCharPtr = nameInUrl;
-    while (*currCharPtr != '\0') {
-        if (*currCharPtr == ' ') {
-            *currCharPtr = '-';
-        }
-
-        currCharPtr++;
-    }
+    toSkewerCase(name, nameInUrl);
 
     // Copy the link's beginning, name, and end into url
     strNCpySafe(url, LINK_BEGINNING, LINK_BEGINNING_SIZE);
@@ -535,6 +531,21 @@ void toLower(const char *rawStr, char *lowerStr)
         currCharPtr++;
     }
 } // toLower
+
+void toSkewerCase(const char *src, char *skewerCase) {
+    // lowercases the letters
+    toLower(src, skewerCase);
+
+    // replace all spaces in name with dashes
+    char *currCharPtr = skewerCase;
+    while (*currCharPtr != '\0') {
+        if (*currCharPtr == ' ') {
+            *currCharPtr = '-';
+        }
+
+        currCharPtr++;
+    }
+} // toSkewerCase
 
 bool getLine(char *line, size_t lineSize)
 {
@@ -852,30 +863,51 @@ void selectOrgFromList(Organization **orgPtr, OrgNode **headPtr, const char *nam
     }
 } // selectOrgFromList
 
-int setUp(Organization *org)
+int setUp(OrgNode **headPtr)
 {
+    // Create an organization to add to a node
+    Organization org;
+
     // Grab user inputs
-    getLineWithPrompt(org->name, STRING_SIZE, ORG_NAME_PROMPT);
-    getLineWithPrompt(org->purpose, STRING_SIZE, ORG_PURPOSE_PROMPT);
-    getLineWithPrompt(org->ownerFirstLastName, STRING_SIZE, 
+    getLineWithPrompt(org.name, STRING_SIZE, ORG_NAME_PROMPT);
+    getLineWithPrompt(org.purpose, STRING_SIZE, ORG_PURPOSE_PROMPT);
+    getLineWithPrompt(org.ownerFirstLastName, STRING_SIZE, 
                       FIRST_LAST_NAME_PROMPT);
-    getPosDouble(&org->goalAmount, GOAL_PROMPT, GOAL_ERROR, MIN_GOAL);
-    getEmail(org->ownerEmail, STRING_SIZE);
-    getPassword(org->ownerPwd, STRING_SIZE);
-    generateUrl(org->url, org->name);
+    getPosDouble(&org.goalAmount, GOAL_PROMPT, GOAL_ERROR, MIN_GOAL);
+    getEmail(org.ownerEmail, STRING_SIZE);
+    getPassword(org.ownerPwd, STRING_SIZE);
+    generateUrl(org.url, org.name);
 
     // Initialize count and sum variables
-    org->numDonations = 0;
-    org->donationSum = 0.0;
-    org->numDonors = 0;
-    org->feesSum = 0.0;
+    org.numDonations = 0;
+    org.donationSum = 0.0;
+    org.numDonors = 0;
+    org.feesSum = 0.0;
     
-    // Print out thank you message. Not a constant in case more variables in the
-    // message are desired.
-    printf("Thank you %s. The url to raise funds for %s is %s.\n\n",
-           org->ownerFirstLastName, org->name, org->url);
+    // Generate the receipt's path
+    generateReceiptPath(org.receiptPath, org.name);
 
-    return DONATIONS_MODE_FLAG;
+    // Create the receipts file, if it already exists, wipe it
+    FILE *receiptsFile = fopen(org.receiptPath, CREATE_LL_RECEIPT_MODE);
+    fclose(receiptsFile);
+
+    // Insert the org to the linked list
+    insertOrgToList(headPtr, org);
+
+    // Print out thank you message. Not a constant in case more variables in the
+    // message are desired
+    printf("Thank you %s. The url to raise funds for %s is %s.\n\n",
+           org.ownerFirstLastName, org.name, org.url);
+
+    // Figure out whether to add another organization
+    int retFlag;
+    if (getYesOrNo(NEW_ORG_PROMPT, NEW_ORG_ERROR)) {
+        retFlag = SETUP_MODE_FLAG;
+    } else {
+        retFlag = DONATIONS_MODE_FLAG;
+    }
+
+    return retFlag;
 } // setUp
 
 int donate(Organization *org, Donor *donor)
