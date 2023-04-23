@@ -26,6 +26,7 @@
 
 //## Prompt Messages
 #define DONATION_PROMPT "Enter your donation amount($): "
+#define DONATION_SELECT_PROMPT "Select the organization to donate to: "
 #define EMAIL_PROMPT "Enter email address: "
 #define EMAIL_VALID_PROMPT "Is this email correct? (y)es or (n)o: "
 #define GOAL_PROMPT "Enter the goal amount you want to raise: "
@@ -35,6 +36,7 @@
 #define FIRST_LAST_NAME_PROMPT "Enter first and last name: "
 #define PASSWORD_PROMPT "Enter password: "
 #define RECEIPT_PROMPT "Do you want a receipt, (y)es or (n)o? "
+#define SELECT_PROMPT "Enter the name of the organization you wish to donate to: "
 #define URL_PROMPT "Enter URL for your fundraiser: "
 #define ZIP_PROMPT "Enter your zip code: "
 
@@ -49,6 +51,7 @@
 #define PASSWORD_ERROR "That password is not valid, please enter another: "
 #define PASSWORD_MATCH_ERROR "That password does not match, enter another: "
 #define RECEIPT_ERROR "Please enter (y)es or (n)o: "
+#define SELECT_ERROR "Please enter the valid name of a registered organization: "
 #define URL_ERROR "That URL is not valid, please enter another: "
 #define ZIP_ERROR "That zip code is not valid, please enter another: "
 
@@ -73,6 +76,7 @@ const char NO[STRING_SIZE] = "n";
 
 //## Linked List Constants
 #define CREATE_LL_RECEIPT_MODE "w"
+#define ADD_TO_RECEIPT_MODE "a"
 #define MEM_ERROR "Not enough memory for new nodes."
 #define LINKED_LIST_EMPTY "There aren't any names in the list."
 #define LINKED_LIST_HEADER "Organization\t\tGoal Amount\t\tCurrent Donations"
@@ -143,12 +147,13 @@ void clearBuffer(void);
  */
 bool matchCredential(const char *cred, const char *prompt, const char
                      *badMatchError);
-//! Prints a receipt for an organization.
+//! Prints a receipt for an organization to a given stream.
 /*! 
+  \param stream the stream to print to
   \param org the organization you wish to have a receipt printed for
-  \param fee the fees 
+  \param donation the amount donated
  */
-void printReceipt(const Organization *org, double donation);
+void fPrintReceipt(FILE *stream, const Organization *org, double donation);
 //! Compares two strings in a caseless manner.
 /*!
   \param str1 the string to compare against
@@ -336,6 +341,12 @@ void printListContents(OrgNode **headPtr);
   \param name the name to select for in the list
  */
 void selectOrgFromList(Organization **orgPtr, OrgNode **headPtr, const char *name);
+//! Selects a valid organization from a linked list given user input.
+/*!
+  \param orgPtr the org which will contain a valid, selected org
+  \param headPtr the location of the head of the linked list
+ */
+void selectValidOrgFromList(Organization **orgPtr, OrgNode **headPtr);
 
 //## Modes
 //! Sets up an org linked list with user input.
@@ -344,13 +355,15 @@ void selectOrgFromList(Organization **orgPtr, OrgNode **headPtr, const char *nam
   \return a mode flag
  */
 int setUp(OrgNode **headPtr);
-//! Have a user donate to the organization.
+//! Have a user donate an organization.
 /*!
-  \param org the pointer to the organization to donate to
+  \param headPtr the pointer to the head of the linked list to donate to\
+  \param currOrgPtr the pointer to the current org the program is donating to /
+                    using for credentials
   \param donor the pointer to a donor struct to track donors
   \return a mode flag
  */
-int donate(Organization *org, Donor *donor);
+int donate(OrgNode **headPtr, Organization **currOrgPtr, Donor *donor);
 //! Enter the reports mode which prints out organization details and ends the
 //! program.
 /*!
@@ -362,7 +375,8 @@ int report(const Organization *org);
 
 int main(void)
 {
-    OrgNode *headPtr;
+    OrgNode *headPtr = NULL;
+    Organization *currOrgPtr;
 
     // Ignore this for now: it is an unused variable used to allow donations to 
     // run when donors are not tracked for the moment.
@@ -381,11 +395,13 @@ int main(void)
             break;
         
           case DONATIONS_MODE_FLAG:
-            // currFlag = donate(&org, &dummyDonor);
+            currFlag = donate(&headPtr, &currOrgPtr, &dummyDonor);
             break;
 
           case REPORT_MODE_FLAG:
             // currFlag = report(&org);
+            printListContents(&headPtr);
+            currFlag = END_PROGRAM_FLAG;
             break;
         
           default:
@@ -413,6 +429,8 @@ int main(void)
     //         }
     //     }
     // }
+
+    emptyList(&headPtr);
 
     return 0;
 } // main
@@ -463,7 +481,7 @@ bool matchCredential(const char *cred, const char *prompt, const char
     return isValid;
 } // matchCredential
 
-void printReceipt(const Organization *org, double donation)
+void fPrintReceipt(FILE *stream, const Organization *org, double donation)
 {
     // create formatted timestamp
     char timeStamp[TIME_STAMP_SIZE];
@@ -472,11 +490,12 @@ void printReceipt(const Organization *org, double donation)
                 localtime(&time_var));
 
     // print the actual receipt
-    puts("");
-    printf("Organization: %s\n", org->name);
-    printf("Donation Amount: $%.2lf\n", donation);
-    printf("Donation Date: %s\n", timeStamp);
-} // print receipt
+    fputs("", stream);
+    fprintf(stream, "Organization: %s\n", org->name);
+    fprintf(stream, "Donation Amount: $%.2lf\n", donation);
+    fprintf(stream, "Donation Date: %s\n", timeStamp);
+    fputs("", stream);
+} // fPrintReceipt
 
 int caselessStrcmp(const char *str1, const char *str2)
 {
@@ -840,7 +859,7 @@ void printListContents(OrgNode **headPtr)
         while (currNode != NULL) {
             // print the current org's data
             Organization currOrg = currNode->org;
-            printf("%-20s\t$%-16.2f\t%-16.2f\n", currOrg.name,
+            printf("%-20s\t$%-16.2f\t$%-16.2f\n", currOrg.name,
                    currOrg.goalAmount, currOrg.donationSum);
 
             currNode = currNode->nextNodePtr;
@@ -852,7 +871,8 @@ void selectOrgFromList(Organization **orgPtr, OrgNode **headPtr, const char *nam
 {
     OrgNode *currNodePtr = *headPtr;
 
-    while (currNodePtr != NULL && strcmp(currNodePtr->org.name, name) != 0) {
+    while (currNodePtr != NULL &&
+           caselessStrcmp(currNodePtr->org.name, name) != 0) {
         currNodePtr = currNodePtr->nextNodePtr;
     }
 
@@ -862,6 +882,20 @@ void selectOrgFromList(Organization **orgPtr, OrgNode **headPtr, const char *nam
         *orgPtr = &(currNodePtr->org);
     }
 } // selectOrgFromList
+
+void selectValidOrgFromList(Organization **orgPtr, OrgNode **headPtr)
+{
+    char name[STRING_SIZE];
+    getLineWithPrompt(name, STRING_SIZE, SELECT_PROMPT);
+
+    selectOrgFromList(orgPtr, headPtr, name);
+
+    while (*orgPtr == NULL) {
+        getLineWithPrompt(name, STRING_SIZE, SELECT_ERROR);
+
+        selectOrgFromList(orgPtr, headPtr, name);
+    }
+} // selectValidOrgFromList
 
 int setUp(OrgNode **headPtr)
 {
@@ -899,7 +933,7 @@ int setUp(OrgNode **headPtr)
     printf("Thank you %s. The url to raise funds for %s is %s.\n\n",
            org.ownerFirstLastName, org.name, org.url);
 
-    // Figure out whether to add another organization
+    // Figure out whether to add another organization with a flag
     int retFlag;
     if (getYesOrNo(NEW_ORG_PROMPT, NEW_ORG_ERROR)) {
         retFlag = SETUP_MODE_FLAG;
@@ -910,9 +944,15 @@ int setUp(OrgNode **headPtr)
     return retFlag;
 } // setUp
 
-int donate(Organization *org, Donor *donor)
+int donate(OrgNode **headPtr, Organization **currOrgPtr, Donor *donor)
 {
-    int exitValue;
+    puts(DONATION_SELECT_PROMPT);
+    printListContents(headPtr);
+    puts("");
+
+    selectValidOrgFromList(currOrgPtr, headPtr);
+
+    Organization *org = *currOrgPtr;
 
     // Print out org info. Not constants in case more variables in the
     // printf statements are desired.
@@ -933,9 +973,11 @@ int donate(Organization *org, Donor *donor)
     double donation = 0;
     getDonation(&donation);
 
+    int retFlag;
+
     // exit to reports mode
     if (donation == ADMIN_NUM) {
-        exitValue = REPORT_MODE_FLAG;
+        retFlag = REPORT_MODE_FLAG;
     }
     // add donation
     else {
@@ -955,19 +997,25 @@ int donate(Organization *org, Donor *donor)
 
         // print donation thank you
         printf("Thank you for your donation. There is a %.1lf%% credit card" 
-               "processing fee of %.2lf. %.2lf will be donated.\n",
+               "processing fee of $%.2lf. $%.2lf will be donated.\n",
                 100 * TRANSACTION_FEE, fee, effectiveDonation);
+
         
+        // Ask user for receipt
         if (getYesOrNo(RECEIPT_PROMPT, RECEIPT_ERROR)) {
-            printReceipt(org, donation);
+            fPrintReceipt(stdout, org, donation);
+
+            FILE *receipts = fopen(org->receiptPath, ADD_TO_RECEIPT_MODE);
+            fPrintReceipt(receipts, org, donation);
+            fclose(receipts);
         }
 
-        exitValue = DONATIONS_MODE_FLAG;
+        retFlag = DONATIONS_MODE_FLAG;
     }
 
     puts("");
 
-    return exitValue;
+    return retFlag;
 } // donate
 
 int report(const Organization *org)
