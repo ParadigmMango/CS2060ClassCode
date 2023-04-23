@@ -19,10 +19,10 @@
 //## General Constants
 #define STRING_SIZE 80
 #define TIME_STAMP_SIZE 19
-#define MAX_CRED_PROMPTS 2
+#define MAX_CRED_PROMPTS 3
 #define MIN_DONATION 0.0
 #define MIN_GOAL 0.0
-#define TRANSACTION_FEE 0.029
+#define TRANSACTION_FEE 0.031
 
 //## Prompt Messages
 #define DONATION_PROMPT "Enter your donation amount($): "
@@ -64,8 +64,13 @@
 #define LINK_BEGINNING_SIZE 17
 #define LINK_END "?form=popup#"
 #define LINK_END_SIZE 12
-#define PATH_END "-receipts.txt"
-#define PATH_END_SIZE 13
+
+//## File Cosntants
+#define FILE_WRITE_MODE "w"
+#define FILE_APPEND_MODE "a"
+#define ORGS_PATH "orgs.txt"
+#define RECEIPTS_PATH_END "-receipts.txt"
+#define RECEIPTS_PATH_END_SIZE 13
 
 //## Yes/No Constants
 const char YES[STRING_SIZE] = "y";
@@ -75,8 +80,6 @@ const char NO[STRING_SIZE] = "n";
 #define ZIP_SIZE 5
 
 //## Linked List Constants
-#define CREATE_LL_RECEIPT_MODE "w"
-#define ADD_TO_RECEIPT_MODE "a"
 #define MEM_ERROR "Not enough memory for new nodes."
 #define LINKED_LIST_EMPTY "There aren't any names in the list."
 #define LINKED_LIST_HEADER "Organization\t\tGoal Amount\t\tCurrent Donations"
@@ -154,6 +157,12 @@ bool matchCredential(const char *cred, const char *prompt, const char
   \param donation the amount donated
  */
 void fPrintReceipt(FILE *stream, const Organization *org, double donation);
+//! Prints a summary for an organization to a given stream.
+/*! 
+  \param stream the stream to print to
+  \param org the organization you wish to have a receipt printed for
+ */
+void fPrintSummary(FILE *stream, const Organization *org);
 //! Compares two strings in a caseless manner.
 /*!
   \param str1 the string to compare against
@@ -367,10 +376,12 @@ int donate(OrgNode **headPtr, Organization **currOrgPtr, Donor *donor);
 //! Enter the reports mode which prints out organization details and ends the
 //! program.
 /*!
-  \param org the organization to print details about
+  \param headPtr the pointer to the head of the linked list to donate to\
+  \param currOrgPtr the pointer to the current org the program is using for 
+                    credentials
   \return a mode flag
  */
-int report(const Organization *org);
+int report(OrgNode **headPtr, Organization **currOrgPtr);
 
 
 int main(void)
@@ -399,9 +410,7 @@ int main(void)
             break;
 
           case REPORT_MODE_FLAG:
-            // currFlag = report(&org);
-            printListContents(&headPtr);
-            currFlag = END_PROGRAM_FLAG;
+            currFlag = report(&headPtr, &currOrgPtr);
             break;
         
           default:
@@ -490,12 +499,20 @@ void fPrintReceipt(FILE *stream, const Organization *org, double donation)
                 localtime(&time_var));
 
     // print the actual receipt
-    fputs("", stream);
     fprintf(stream, "Organization: %s\n", org->name);
     fprintf(stream, "Donation Amount: $%.2lf\n", donation);
     fprintf(stream, "Donation Date: %s\n", timeStamp);
-    fputs("", stream);
+    fputs("\n", stream);
 } // fPrintReceipt
+
+void fPrintSummary(FILE *stream, const Organization *org)
+{
+    fprintf(stream, "Organization Name: %s\n", org->name);
+    fprintf(stream, "Total Number of Donations: %d\n", org->numDonations);
+    fprintf(stream, "Total amount raised: $%.2lf\n", org->donationSum);
+    fprintf(stream, "Total Credit Card processing: $%.2lf\n", org->feesSum);
+    fputs("\n", stream);
+} // fPrintSummary
 
 int caselessStrcmp(const char *str1, const char *str2)
 {
@@ -517,7 +534,7 @@ void generateReceiptPath(char receiptPath[STRING_SIZE],
 
     // Copy the link's beginning, name, and end into url
     strNCpySafe(receiptPath, nameInPath, strlen(nameInPath));
-    strncpy(receiptPath + strlen(nameInPath), PATH_END, PATH_END_SIZE + 1);
+    strncpy(receiptPath + strlen(nameInPath), RECEIPTS_PATH_END, RECEIPTS_PATH_END_SIZE + 1);
 } // generateReceiptPath
 
 void generateUrl(char url[STRING_SIZE], const char name[STRING_SIZE]) {
@@ -922,7 +939,7 @@ int setUp(OrgNode **headPtr)
     generateReceiptPath(org.receiptPath, org.name);
 
     // Create the receipts file, if it already exists, wipe it
-    FILE *receiptsFile = fopen(org.receiptPath, CREATE_LL_RECEIPT_MODE);
+    FILE *receiptsFile = fopen(org.receiptPath, FILE_WRITE_MODE);
     fclose(receiptsFile);
 
     // Insert the org to the linked list
@@ -952,20 +969,21 @@ int donate(OrgNode **headPtr, Organization **currOrgPtr, Donor *donor)
 
     selectValidOrgFromList(currOrgPtr, headPtr);
 
-    Organization *org = *currOrgPtr;
+    Organization *currOrg = *currOrgPtr;
 
     // Print out org info. Not constants in case more variables in the
     // printf statements are desired.
-    puts(org->url);
+    puts(currOrg->url);
     puts("MAKE A DIFFERENCE BY YOUR DONATION");
-    printf("Organization: %s\n", org->name);
-    printf("Purpose: %s\n", org->purpose);
-    printf("We currently have raised $%.2lf.\n", org->donationSum);
-    if (org->donationSum >= org->goalAmount) {
+    printf("Organization: %s\n", currOrg->name);
+    printf("Purpose: %s\n", currOrg->purpose);
+    printf("We currently have raised $%.2lf.\n", currOrg->donationSum);
+    if (currOrg->donationSum >= currOrg->goalAmount) {
         puts("We have reached our goal but can still use the donations.");
     } else {
         printf("We are %2.2lf%% towards our goal of $%.2lf.\n",
-               (org->donationSum / org->goalAmount) * 100, org->goalAmount);
+               (currOrg->donationSum / currOrg->goalAmount) * 100,
+               currOrg->goalAmount);
     }
     puts("");
 
@@ -988,12 +1006,12 @@ int donate(OrgNode **headPtr, Organization **currOrgPtr, Donor *donor)
 
         // track donations and fees
         double fee = donation * TRANSACTION_FEE;
-        org->feesSum += fee;
+        currOrg->feesSum += fee;
 
         double effectiveDonation = donation - fee;
-        org->donationSum += effectiveDonation;
+        currOrg->donationSum += effectiveDonation;
 
-        org->numDonations++;
+        currOrg->numDonations++;
 
         // print donation thank you
         printf("Thank you for your donation. There is a %.1lf%% credit card" 
@@ -1003,10 +1021,10 @@ int donate(OrgNode **headPtr, Organization **currOrgPtr, Donor *donor)
         
         // Ask user for receipt
         if (getYesOrNo(RECEIPT_PROMPT, RECEIPT_ERROR)) {
-            fPrintReceipt(stdout, org, donation);
+            fPrintReceipt(stdout, currOrg, donation);
 
-            FILE *receipts = fopen(org->receiptPath, ADD_TO_RECEIPT_MODE);
-            fPrintReceipt(receipts, org, donation);
+            FILE *receipts = fopen(currOrg->receiptPath, FILE_APPEND_MODE);
+            fPrintReceipt(receipts, currOrg, donation);
             fclose(receipts);
         }
 
@@ -1018,23 +1036,33 @@ int donate(OrgNode **headPtr, Organization **currOrgPtr, Donor *donor)
     return retFlag;
 } // donate
 
-int report(const Organization *org)
+int report(OrgNode **headPtr, Organization **currOrgPtr)
 {
     int exitFlag;
 
-    puts("");
+    // get the org at org ptr
+    Organization *currOrg = *currOrgPtr;
 
     // Determines if the email address is valid
-    if (matchCredential(org->ownerEmail, EMAIL_PROMPT, EMAIL_MATCH_ERROR)) {
+    if (matchCredential(currOrg->ownerEmail, EMAIL_PROMPT, EMAIL_MATCH_ERROR)) {
         // dermines if the password is valid
-        if (matchCredential(org->ownerPwd, PASSWORD_PROMPT,
+        if (matchCredential(currOrg->ownerPwd, PASSWORD_PROMPT,
                 PASSWORD_MATCH_ERROR)) {
-            // prints summary
+            // open orgs file
+            FILE *orgsFile = fopen(ORGS_PATH, FILE_WRITE_MODE);
+
             puts("");
-            printf("~~~~~ %s ~~~~~\n", org->name);
-            printf("You collected %u donation(s) totaling $%.2lf after $%.2lf "
-                   "in fees.\n", org->numDonations, org->donationSum,
-                   org->feesSum);
+
+            // iterate through the linked list
+            OrgNode *currNodePtr = *headPtr;
+            while (currNodePtr != NULL) {
+                // prints summary to orgs file and stdout
+                fPrintSummary(stdout, &(currNodePtr->org));
+                fPrintSummary(orgsFile, &(currNodePtr->org));
+                currNodePtr = currNodePtr->nextNodePtr;
+            }
+
+            fclose(orgsFile);
 
             exitFlag = END_PROGRAM_FLAG;
         } else {
