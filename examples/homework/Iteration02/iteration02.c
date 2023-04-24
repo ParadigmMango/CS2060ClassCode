@@ -72,11 +72,13 @@
 #define RECEIPTS_PATH_END "-receipts.txt"
 #define RECEIPTS_PATH_END_SIZE 13
 
-//## Password Constants
+//## Credential Constants
 #define PWD_MIN_UPPER 1
 #define PWD_MIN_LOWER 1
 #define PWD_MIN_CHARS 7
 #define PWD_MIN_NUMS 1
+#define MIN_EMAIL_LEN 7
+#define TOP_LVL_DOMAIN_LEN 3
 
 
 //## Yes/No Constants
@@ -657,7 +659,51 @@ void getValidatedWord(char *word, size_t wordSize, bool (*validate)(const char
 
 bool isEmail(const char *email)
 {
-    return getYesOrNo(EMAIL_VALID_PROMPT, EMAIL_VALID_ERROR);
+    bool retVal = true;
+
+    // test if the email is shorter then the absolute minimum length an email 
+    // can be
+    if (strlen(email) < MIN_EMAIL_LEN) {
+        retVal = false;
+    } else {
+        // declare a first char pointer and a frist @ char pointer
+        const char *firstCharPtr = email;
+        char *firstAtSignPtr = strchr(email, '@');
+
+        // test if an at sign exists and that it is not also the first character
+        if (firstAtSignPtr == NULL || firstAtSignPtr == firstCharPtr) {
+            retVal = false;
+        } else {
+            // find the pointers to the first dot in the email and the char
+            // before it
+            char *firstDotPtr = strchr(email, '.');
+            const char *charBeforeDotPtr = firstDotPtr - 1;
+
+            // ensure the 
+            if (firstDotPtr == NULL || charBeforeDotPtr == firstAtSignPtr) {
+                retVal = false;
+            } else {
+                // iterate a number of times to validate that all top-level
+                // domain characters are letters
+                const char *currCharPtr = firstDotPtr + 1;
+                for (int i = 0; i < TOP_LVL_DOMAIN_LEN; i++) {
+                    if (!isalpha(*currCharPtr)) {
+                        retVal = false;
+                    }
+
+                    currCharPtr++;
+                }
+
+                // confirm that the char after the extension is the null term
+                // character
+                if (*currCharPtr != '\0') {
+                    retVal = false;
+                }
+            }
+        }
+    }
+
+    return retVal;
 } // isEmail
 
 bool isPassword(const char *password)
@@ -750,7 +796,10 @@ bool isZip(const char *zip)
 
 void getEmail(char *email, size_t emailSize)
 {
-    getValidatedWord(email, emailSize, &isEmail, EMAIL_PROMPT, EMAIL_ERROR);
+    // Wrap get validated word for manual user validation
+    do {
+        getValidatedWord(email, emailSize, &isEmail, EMAIL_PROMPT, EMAIL_ERROR);
+    } while (!getYesOrNo(EMAIL_VALID_PROMPT, EMAIL_VALID_ERROR));
 } // getEmail
 
 void getPassword(char *password, size_t passwordSize)
