@@ -72,6 +72,13 @@
 #define RECEIPTS_PATH_END "-receipts.txt"
 #define RECEIPTS_PATH_END_SIZE 13
 
+//## Password Constants
+#define PWD_MIN_UPPER 1
+#define PWD_MIN_LOWER 1
+#define PWD_MIN_CHARS 7
+#define PWD_MIN_NUMS 1
+
+
 //## Yes/No Constants
 const char YES[STRING_SIZE] = "y";
 const char NO[STRING_SIZE] = "n";
@@ -439,6 +446,7 @@ int main(void)
     //     }
     // }
 
+    // empty the list
     emptyList(&headPtr);
 
     return 0;
@@ -654,7 +662,54 @@ bool isEmail(const char *email)
 
 bool isPassword(const char *password)
 {
-    return true;
+    // Declare counts
+    unsigned int upperCount = 0;
+    unsigned int lowerCount = 0;
+    unsigned int numCount = 0;
+    unsigned int charCount = 0;
+
+    bool nullCharReached = false;
+
+    // char pointer for iteration through the string
+    const char *currCharPtr = password;
+
+    // iterate the length of the string or until a null char is reached
+    while (charCount < (strlen(password) + 1) && nullCharReached == false) {
+        char currChar = *currCharPtr;
+
+        // handle null char reached
+        if (currChar == '\0') {  
+            nullCharReached = true;
+        } else { 
+            // count up the relevant character type counters
+            if (isupper(currChar)) {
+                upperCount++;
+            } else if (islower(currChar)) {
+                lowerCount++;
+            } else if (isdigit(currChar)) {
+                numCount++;
+            }
+
+            // count up the general character counter
+            charCount++;
+
+            // iterate the char pointer forwards along the string
+            currCharPtr++;
+        }
+    } // character loop
+
+    // determin if the password is valid using the minimums and whether the 
+    // end was reached
+    bool isPasswordValid;
+    if (upperCount < PWD_MIN_UPPER || lowerCount < PWD_MIN_LOWER || 
+            numCount < PWD_MIN_NUMS || charCount < PWD_MIN_CHARS || 
+            !nullCharReached) {
+        isPasswordValid = false;
+    } else {
+        isPasswordValid = true;
+    }
+
+    return isPasswordValid;
 } // isPassword
 
 bool isYesNo(const char *yesNo)
