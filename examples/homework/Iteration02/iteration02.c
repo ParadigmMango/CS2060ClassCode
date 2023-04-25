@@ -64,6 +64,7 @@
 #define LINK_BEGINNING_SIZE 17
 #define LINK_END "?form=popup#"
 #define LINK_END_SIZE 12
+#define LINK_SIZE LINK_END_SIZE + LINK_BEGINNING_SIZE + STRING_SIZE
 
 //## File Cosntants
 #define FILE_WRITE_MODE "w"
@@ -71,6 +72,7 @@
 #define ORGS_PATH "orgs.txt"
 #define RECEIPTS_PATH_END "-receipts.txt"
 #define RECEIPTS_PATH_END_SIZE 13
+#define RECEIPTS_PATH_SIZE RECEIPTS_PATH_END_SIZE + STRING_SIZE
 
 //## Credential Constants
 #define PWD_MIN_UPPER 1
@@ -114,8 +116,8 @@ typedef struct organization
     // organziation properties
     char name[STRING_SIZE];
     char purpose[STRING_SIZE];
-    char receiptPath[STRING_SIZE];
-    char url[STRING_SIZE];
+    char receiptPath[RECEIPTS_PATH_SIZE];
+    char url[LINK_SIZE];
     double goalAmount;
 
     // owner properties
@@ -184,14 +186,14 @@ int caselessStrcmp(const char *str1, const char *str2);
   \param receiptPath the string to write the org path into
   \param name the name of the organization
  */
-void generateReceiptPath(char receiptPath[STRING_SIZE],
+void generateReceiptPath(char receiptPath[RECEIPTS_PATH_SIZE],
                          const char name[STRING_SIZE]);
 //! Generates a url given an org's name
 /*!
   \param url the string to write the org's url into
   \param name the name of the organization
  */
-void generateUrl(char url[STRING_SIZE], const char name[STRING_SIZE]);
+void generateUrl(char url[LINK_SIZE], const char name[STRING_SIZE]);
 //! A safer version of strncpy that null terminates all srcs
 /*!
   \param dest the destination string to write to
@@ -537,17 +539,18 @@ int caselessStrcmp(const char *str1, const char *str2)
     return strcmp(str1Lower, str2Lower);
 } // strCmpCaseless
 
-void generateReceiptPath(char receiptPath[STRING_SIZE],
+void generateReceiptPath(char receiptPath[RECEIPTS_PATH_SIZE],
                          const char name[STRING_SIZE]) {
     char nameInPath[STRING_SIZE];
     toSkewerCase(name, nameInPath);
 
-    // Copy the link's beginning, name, and end into url
+    // Copy the link's beginning, name, and end into path
     strNCpySafe(receiptPath, nameInPath, strlen(nameInPath));
-    strncpy(receiptPath + strlen(nameInPath), RECEIPTS_PATH_END, RECEIPTS_PATH_END_SIZE + 1);
+    strncpy(receiptPath + strlen(nameInPath), RECEIPTS_PATH_END,
+            RECEIPTS_PATH_END_SIZE + 1);
 } // generateReceiptPath
 
-void generateUrl(char url[STRING_SIZE], const char name[STRING_SIZE]) {
+void generateUrl(char url[LINK_SIZE], const char name[STRING_SIZE]) {
     char nameInUrl[STRING_SIZE];
     toSkewerCase(name, nameInUrl);
 
