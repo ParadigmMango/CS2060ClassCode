@@ -157,10 +157,11 @@ void clearBuffer(void);
   \param prompt the original prompt for the credential
   \param badMatchError the error to display if the user entered credential
                        doen't match
+  \param caseSensitive whether or not the match will be case-sensitive
   \return whether or not the user can match the credential in time
  */
 bool matchCredential(const char *cred, const char *prompt, const char
-                     *badMatchError);
+                     *badMatchError, bool caseSensitive);
 //! Prints a receipt for an organization to a given stream.
 /*! 
   \param stream the stream to print to
@@ -463,7 +464,7 @@ void clearBuffer(void)
 } // clearBuffer
 
 bool matchCredential(const char *cred, const char *prompt, const char
-                     *badMatchError)
+                     *badMatchError, bool caseSensitive)
 {
     // Grab the initial credential to test against
     printf("%s", prompt);
@@ -473,10 +474,19 @@ bool matchCredential(const char *cred, const char *prompt, const char
     unsigned int numPrompts = 1;
     bool isValid;
 
+    // create a function pointer to either the strcmp or caselessStrcmp
+    int (*strcmpPtr)(const char *, const char *);
+
+    if (caseSensitive) {
+        strcmpPtr = &strcmp;
+    } else {
+        strcmpPtr = &caselessStrcmp;
+    }
+
     // special case here is that MAX_CRED_PROMPTS means no limit on cred prompts
     if (MAX_CRED_PROMPTS == 0) {
         // Print errors and grab creds until a valid one is obtained
-        while (strcmp(cred, inputCred) != 0) {
+        while ((*strcmpPtr)(cred, inputCred) != 0) {
             printf("%s", badMatchError);
 
             getWord(inputCred, STRING_SIZE);
@@ -488,7 +498,7 @@ bool matchCredential(const char *cred, const char *prompt, const char
     else {
         // print erros and grab inputs until a valid one is found or the user
         // runs out of prompts
-        while (strcmp(cred, inputCred) != 0 && numPrompts < MAX_CRED_PROMPTS) {
+        while ((*strcmpPtr)(cred, inputCred) != 0 && numPrompts < MAX_CRED_PROMPTS) {
             printf("%s", badMatchError);
 
             getWord(inputCred, STRING_SIZE);
@@ -496,7 +506,7 @@ bool matchCredential(const char *cred, const char *prompt, const char
             numPrompts++;
         }
 
-        isValid = strcmp(cred, inputCred) == 0;
+        isValid = ( (*strcmpPtr)(cred, inputCred) == 0 );
     }
 
     return isValid;
@@ -1034,7 +1044,6 @@ int setUp(OrgNode **headPtr)
     getPosDouble(&org.goalAmount, GOAL_PROMPT, GOAL_ERROR, MIN_GOAL);
     getEmail(org.ownerEmail, STRING_SIZE);
     getPassword(org.ownerPwd, STRING_SIZE);
-    generateUrl(org.url, org.name);
 
     // Initialize count and sum variables
     org.numDonations = 0;
@@ -1042,7 +1051,8 @@ int setUp(OrgNode **headPtr)
     org.numDonors = 0;
     org.feesSum = 0.0;
     
-    // Generate the receipt's path
+    // Generate the receipt's path and the org's url
+    generateUrl(org.url, org.name);
     generateReceiptPath(org.receiptPath, org.name);
 
     // Create the receipts file, if it already exists, wipe it
@@ -1151,10 +1161,10 @@ int report(OrgNode **headPtr, Organization **currOrgPtr)
     Organization *currOrg = *currOrgPtr;
 
     // Determines if the email address is valid
-    if (matchCredential(currOrg->ownerEmail, EMAIL_PROMPT, EMAIL_MATCH_ERROR)) {
+    if (matchCredential(currOrg->ownerEmail, EMAIL_PROMPT, EMAIL_MATCH_ERROR, false)) {
         // dermines if the password is valid
         if (matchCredential(currOrg->ownerPwd, PASSWORD_PROMPT,
-                PASSWORD_MATCH_ERROR)) {
+                PASSWORD_MATCH_ERROR, true)) {
             // open orgs file
             FILE *orgsFile = fopen(ORGS_PATH, FILE_WRITE_MODE);
 
